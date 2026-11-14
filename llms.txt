@@ -1,0 +1,19 @@
+# Cratis Studio
+
+> Cratis Studio is a collaborative workspace where developers, domain experts and product owners design business behavior together with event models, screens and specifications.
+
+Key facts:
+
+- Studio is a hosted product at https://app.cratis.studio; sign-up and pricing are at https://cratis.studio.
+- Boards hold event models: commands, events, read models, screens and Given/When/Then specifications.
+- Studio edits Cratis Screenplay models and is built on Cratis Chronicle; framework documentation lives at https://www.cratis.io.
+
+## Documentation Sets
+
+- [Abridged documentation](https://docs.cratis.studio/llms-small.txt): a compact version of the documentation for Cratis Studio, with non-essential content removed
+- [Complete documentation](https://docs.cratis.studio/llms-full.txt): the full documentation for Cratis Studio
+
+## Notes
+
+- The complete documentation includes all content from the official documentation
+- The content is automatically generated from the same source as the official documentation
