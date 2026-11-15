@@ -10234,7 +10234,7 @@ Tokens are encrypted and renewed by Studio. When one cannot be renewed (the pers
 
 > Connect GitHub, Jira, Linear, GitLab, Azure DevOps and Miro to your organization once, so every project can use them.
 
-Studio works with the services your team already uses: where your code lives, where issues go and the modeling tools you draw in. You connect each one **once for the organization**. Projects then choose from what is connected; nobody connects GitHub project by project.
+Studio works with the services your team already uses: where your code lives, where issues go and the modeling tools you draw in. You connect each one **once for the organization**. Projects then choose from what is connected; nobody connects them project by project.
 
 You need to be a maintainer. Open **Organization settings** and select **Integrations**.
 
@@ -10262,12 +10262,6 @@ The page has these sections:
 [GitLab and Azure DevOps ](/organization/gitlab-and-azure-devops/)Issues and work items, and what works today.
 
 [Miro ](/organization/miro/)Import and draw boards on Miro.
-
-## GitHub
-
-[Section titled “GitHub”](#github)
-
-GitHub is connected under **Source Control** by installing the Studio GitHub App. It gives projects their repositories, pull requests, builds, Git sync and issues. How to connect it, check that it is ready and remove it is in [Connect GitHub](/organization/github/).
 
 ## Choose where issues go
 
