@@ -2738,6 +2738,12 @@ A builder takes the slices you mark **Ready for implementation** on the board an
 
 Studio keeps the board and the process around it in order. A **builder** does the building: it takes one slice at a time, builds it with whatever tooling it likes, and reports one outcome. You review what it built on the slice, including the specifications it ran and the assumptions it made.
 
+## Run a builder locally
+
+[Section titled “Run a builder locally”](#run-a-builder-locally)
+
+Studio’s own generation also runs on your machine. The **[Cratis builder](/developers/builders/local/cratis/)** and the **[Axon builder](/developers/builders/local/axon/)** are packaged, build the application at the Screenplay, Code or Code and AI level, run in Docker, and can send their model calls through Studio so usage is counted and pooled there. See [Run a builder locally](/developers/builders/local/).
+
 ## Three ways to build
 
 [Section titled “Three ways to build”](#three-ways-to-build)
@@ -2757,6 +2763,8 @@ The CLI does the rest: it connects to Studio, waits for approval, asks for work,
 [Section titled “Choose your path”](#choose-your-path)
 
 [Configure a builder ](/developers/builders/configure/connect-and-approve/)Connect a builder, have a maintainer approve it with its code, and choose who builds the application, its screens or a single slice.
+
+[Run a builder locally ](/developers/builders/local/)Run the Cratis or Axon builder on your machine or in Docker, at the Screenplay, Code or Code and AI level, with model calls through Studio.
 
 [Build with AI ](/developers/builders/build/with-ai/)Let a coding agent build your slices inside a build kit, from a registered kit or one you write.
 
@@ -4762,7 +4770,7 @@ Everything below is under **Settings** > **Building** inside the application, ex
 [Section titled “Choose the builder for an application”](#choose-the-builder-for-an-application)
 
 1. Open the application, then **Settings** > **Building**.
-2. Set **Builder**. The list holds Studio’s own generation, as **Studio: static code**, **Studio: static code refined by AI** or **Studio: AI only** (the two that involve AI need an AI provider configured), and every approved builder of the organization. A builder that is offline can still be chosen, and its slices wait for it.
+2. Set **Builder**. To run Studio’s own generation on your machine instead, connect a [packaged builder](/developers/builders/local/) and choose it here. The list holds Studio’s own generation, as **Studio: static code**, **Studio: static code refined by AI** or **Studio: AI only** (the two that involve AI need an AI provider configured), and every approved builder of the organization. A builder that is offline can still be chosen, and its slices wait for it.
 3. Select **Save**.
 
 From then on, a slice that becomes **Ready for implementation** is offered to that builder.
@@ -5177,10 +5185,11 @@ A kit with `existingCodebase` can build into a project it did not scaffold. On t
 
 Studio registers the reference kits by name. Each is one archive a host unpacks as is.
 
-| Kit             | Stack                                                        | Slice types              | User interfaces |
-| --------------- | ------------------------------------------------------------ | ------------------------ | --------------- |
-| `cratis-csharp` | .NET on Cratis Arc and Chronicle, React on Cratis Components | all four                 | yes             |
-| `node`          | Node.js in TypeScript on the Cratis Chronicle client, Vitest | state change, state view | no              |
+| Kit             | Stack                                                              | Slice types              | User interfaces |
+| --------------- | ------------------------------------------------------------------ | ------------------------ | --------------- |
+| `cratis-csharp` | .NET on Cratis Arc and Chronicle, React on Cratis Components       | all four                 | yes             |
+| `axon`          | Java on Axon Framework, rendered by the Axon Stage renderer, JUnit | all four                 | no              |
+| `node`          | Node.js in TypeScript on the Cratis Chronicle client, Vitest       | state change, state view | no              |
 
 These addresses need no sign-in; kits hold no organization data and no credentials.
 
@@ -5335,6 +5344,374 @@ A maintainer removes a builder under **Organization settings** > **Builders** wi
 * [Build and deliver](/deliver/) shows the build from the board’s side.
 * [Build a builder](/developers/builders/build/), when no existing builder fits your stack: the Cratis CLI with a generator of your own.
 
+# Build with the Eventmodelers BuildKit
+
+> Use a project that is built with the Eventmodelers BuildKit as a Studio builder - install the kit, connect the builder, choose an agent, route its model calls through Studio and follow a build from slice to commit.
+
+Some teams already build their projects with the [Eventmodelers BuildKit](https://github.com/Nebulit-GmbH/Eventmodelers-Build-Kits): a set of agent loops, prompts and skills that turn the slices of an event model into code on a stack such as Node.js, Axon or OpenCQRS. The **Eventmodelers builder** lets Studio hand such a project its slices. Studio keeps the board, the build loop and the statuses; the kit does the building, with its own agent, prompts and stack templates, and Studio’s builder protocol carries the work.
+
+This page covers everything from installing the kit to following a build.
+
+## How it fits
+
+[Section titled “How it fits”](#how-it-fits)
+
+```text
+Studio ─ build order ─► cratis build run ─► eventmodelers-builder.mjs ─► .slices/…/slice.json ─► the kit's agent loop
+Studio ◄─ outcome ───── cratis build run ◄─ eventmodelers-builder.mjs ◄─ slice status: Done ◄───── the kit's agent
+```
+
+1. The Cratis CLI connects to Studio, claims a slice and writes the [build order](/developers/builders/build/orders-and-outcomes/).
+2. The Eventmodelers builder, a small generator the CLI runs with `--exec`, turns the order’s slices into the slice files the kit looks for: one `slice.json` for each slice, under `.slices/<feature>/<slice>/`, with the status `Planned`, the slice type, the specifications and the order’s Screenplay model beside it.
+3. It starts the kit’s own agent loop in local mode, with no board attached, and watches the slice files.
+4. The kit’s agent builds the slice on the project’s stack and sets the slice’s status as it goes.
+5. When every slice is `Done` (or `Review`, or `Waiting` for the kit’s user interface step), the builder reports **built**. A slice the kit sets to `Blocked` is reported **blocked**, with its reason. A kit that stops, or runs out of time, is reported **failed**.
+6. The CLI verifies, commits on the branch Studio names, pushes and reports, exactly as for any builder.
+
+Nothing of the kit is copied into Studio or the builder: it runs from the project. The adapter keeps `.slices/` and `.build-kit/` out of Git by listing them in the repository’s local exclude file, so the commit holds only the code the kit wrote.
+
+## Before you start
+
+[Section titled “Before you start”](#before-you-start)
+
+* The [Cratis CLI](https://github.com/Cratis/cli), connected to Studio and approved: `cratis build connect --studio --organization <name>`. See [Connect a builder and approve it](/developers/builders/configure/connect-and-approve/).
+* Node.js 20 or later.
+* A Git repository for the application, clean, with credentials that can push to it.
+* The Eventmodelers BuildKit installed in it for the stack you want:
+
+```bash
+npx @eventmodelers/cli init
+```
+
+The kit’s own documentation describes the stacks, the project it scaffolds and the agents it can drive. Its `README` is the reference for `init`, and for the `.build-kit` folder. Check the kit’s licence before you use it; it is not Cratis software.
+
+## Run it
+
+[Section titled “Run it”](#run-it)
+
+The adapter is a single script with no dependencies, packaged in the [builder image](#in-docker) at `/opt/eventmodelers/eventmodelers-builder.mjs`. To run it outside the image, copy the script and its `slices.mjs` from the image. Then, in the project:
+
+```bash
+export EVENTMODELERS_AGENT_COMMAND="codex exec --json --full-auto"
+cratis build run --exec "node /opt/eventmodelers/eventmodelers-builder.mjs" --verify "npm test"
+```
+
+`--verify` runs after the kit is done, so a slice is only reported built when your own tests pass.
+
+### Choose the agent
+
+[Section titled “Choose the agent”](#choose-the-agent)
+
+The kit drives a coding agent for each slice. Choose it with the variable the builder reads:
+
+| Variable                        | Meaning                                                                                                                                                                                                                                                                   |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `EVENTMODELERS_AGENT_COMMAND`   | The agent command the kit runs with each prompt: `codex exec --json --full-auto`, `opencode run --standalone --auto --format json` or `gemini --yolo --output-format stream-json -p`. The kit appends the prompt. With it set, the builder runs the kit’s `ralph-exec.js` |
+| `EVENTMODELERS_RUNNER`          | The kit entry point to run, inside `.build-kit`. Defaults to `ralph-exec.js` when an agent command is set, and `ralph-claude.js` otherwise, which drives Claude Code                                                                                                      |
+| `EVENTMODELERS_KIT_DIR`         | Where the kit is installed. Defaults to `.build-kit` in the project                                                                                                                                                                                                       |
+| `EVENTMODELERS_TIMEOUT_MINUTES` | How long the kit may take for one order. Defaults to 30                                                                                                                                                                                                                   |
+
+Agents run with their own permission model. The kit decides what an agent may do inside the project, so review the kit’s agent settings before you run it unattended.
+
+## Model calls through Studio
+
+[Section titled “Model calls through Studio”](#model-calls-through-studio)
+
+The kit’s agents normally sign in to their own provider. Run the builder with `--ai studio` and they call Studio’s AI gateway instead, on the organization’s providers, with usage counted in Studio:
+
+```bash
+export EVENTMODELERS_AGENT_COMMAND="codex exec --json --full-auto"
+cratis build run --exec "node /opt/eventmodelers/eventmodelers-builder.mjs" --ai studio
+```
+
+The CLI starts a bridge on the machine’s loopback address and puts `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `ANTHROPIC_BASE_URL` and `ANTHROPIC_API_KEY` in the environment of everything it runs. The adapter passes its environment to the kit and the kit to its agent, so any agent that reads those variables, Codex, OpenCode, Claude Code and others, is routed to Studio without a change to the kit. The bridge only answers while a slice is being built, under that slice’s lease. See [The AI gateway](/developers/builders/protocol/ai/).
+
+An agent that does not read those variables, or a kit that sets its own provider, keeps using its own. Check the usage in Studio after a first run: calls that went through the gateway are counted there.
+
+## In Docker
+
+[Section titled “In Docker”](#in-docker)
+
+```bash
+cratis build run --exec "node /opt/eventmodelers/eventmodelers-builder.mjs" --docker --image ghcr.io/cratis/studio-eventmodelers-builder:<version>
+```
+
+The image is the [Cratis builder image](/developers/builders/local/#run-it-in-docker) with Node.js and the adapter at `/opt/eventmodelers`. The project, with its installed kit, is mounted at `/workspace`. Pass the agent’s sign-in variables, or use `--ai studio` so none is needed. The image is built from `Builders/eventmodelers` and published for each released CLI version.
+
+## Follow a build
+
+[Section titled “Follow a build”](#follow-a-build)
+
+On the slice in Studio you see the same things as for any builder: **In progress** while the kit works, then **Built** with the commit and branch, **Blocked** with the kit’s reason, or **Failed**. The CLI’s log shows the kit’s own output.
+
+## What the adapter maps
+
+[Section titled “What the adapter maps”](#what-the-adapter-maps)
+
+| Studio                                                             | Eventmodelers                                                                         |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| Slice type `stateChange`, `stateView`, `automation`, `translation` | `STATE_CHANGE`, `STATE_VIEW`, `AUTOMATION`, `TRANSLATION`                             |
+| The feature of the order                                           | The context folder under `.slices` and `current_context.json`                         |
+| The slice’s specifications                                         | `specifications` on the slice, by id and name                                         |
+| Slice status                                                       | `Planned` at the start. `Done`, `Review` and `Waiting` finish it, `Blocked` blocks it |
+
+The adapter writes the slice descriptor and the Screenplay model. It does not draw the elements of an Eventmodelers board (commands, events and read models) from Screenplay: a kit that needs them reads the Screenplay model, which is the source of truth in Studio.
+
+## Troubleshooting
+
+[Section titled “Troubleshooting”](#troubleshooting)
+
+| You see                                                      | Cause and remedy                                                                                                                 |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| `The Eventmodelers BuildKit is not installed in the project` | `.build-kit/<runner>` is missing. Run `npx @eventmodelers/cli init`, or set `EVENTMODELERS_KIT_DIR` or `EVENTMODELERS_RUNNER`    |
+| `did not finish within … minutes`                            | The kit did not settle every slice. Raise `EVENTMODELERS_TIMEOUT_MINUTES`, or look at the kit’s output                           |
+| `stopped with exit code … before finishing`                  | The kit’s loop ended. Read its output in the log, usually a missing agent command or sign-in                                     |
+| `blocked` on a slice                                         | The kit could not build it and said why. Answer in Studio and mark the slice ready again                                         |
+| No usage in Studio with `--ai studio`                        | The agent ignores the base URL variables. Give it the provider through its own configuration, or choose an agent that reads them |
+
+## Related
+
+[Section titled “Related”](#related)
+
+* [Run a builder locally](/developers/builders/local/)
+* [The AI gateway](/developers/builders/protocol/ai/)
+* [Write a generator](/developers/builders/build/deterministic/)
+* [Build orders and outcomes](/developers/builders/build/orders-and-outcomes/)
+
+# Run a builder locally
+
+> Build a Studio application on your own machine or build server with a packaged builder - Cratis, Axon or Eventmodelers - at the Screenplay, Code or Code and AI level, with model calls made through Studio.
+
+Studio builds slices with its own generation in the cloud. You can run the same builder yourself, on a laptop, a build server or in Docker, and get the same statuses, commits and pull requests in Studio. A packaged builder is the [Cratis CLI](https://github.com/Cratis/cli) with a **level** and a **target**, so it is built on the same builder system as every builder you [connect](/developers/builders/configure/connect-and-approve/), and it speaks the same [builder protocol](/developers/builders/protocol/protocol/).
+
+## The three levels
+
+[Section titled “The three levels”](#the-three-levels)
+
+| Level           | What the builder does                                                                                                                 | Calls a model |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| **Screenplay**  | Commits the Screenplay model to the project and writes no code. The model is the application, and Stage plays it.                     | No            |
+| **Code**        | Commits the model and renders it into code with the renderer of the target. The same model always gives the same code.                | No            |
+| **Code and AI** | Renders the model, then a coding agent completes what a renderer leaves for judgment, such as method bodies the model only describes. | Yes           |
+
+They are the levels Studio offers for an application in the cloud, as **Studio: static code** and **Studio: static code refined by AI**, plus the Screenplay-only choice that builds nothing. A local builder chosen for an application replaces Studio’s own generation for that application.
+
+## The packaged builders
+
+[Section titled “The packaged builders”](#the-packaged-builders)
+
+| Builder    | Builds                                                  | Target   | Page                                                     |
+| ---------- | ------------------------------------------------------- | -------- | -------------------------------------------------------- |
+| **Cratis** | .NET on Cratis Arc and Chronicle, with a React frontend | `cratis` | [The Cratis builder](/developers/builders/local/cratis/) |
+| **Axon**   | Java on Axon Framework                                  | `axon`   | [The Axon builder](/developers/builders/local/axon/)     |
+
+Both are one builder: the Cratis CLI, with the render target chosen by `--target`. Studio shows what each can build, so it offers the Axon builder backend slices only and the Cratis builder backend and screens.
+
+## Start one
+
+[Section titled “Start one”](#start-one)
+
+```bash
+cratis build connect --studio --organization acme           # once per machine; a maintainer approves it
+cratis build run --level code                                # Cratis, deterministic
+cratis build run --level code-ai --agent claude --ai studio  # Cratis, with an agent, calls through Studio
+cratis build run --level code --target axon                  # Axon
+cratis build run --level code --docker                       # the same, in the packaged image
+```
+
+Then choose the builder under **Settings** > **Building** of the application, as described in [Choose who builds](/developers/builders/configure/choose-builders/). The CLI [documentation](https://github.com/Cratis/cli/blob/main/Documentation/builders/local-builders.md) lists every option.
+
+## Run it in Docker
+
+[Section titled “Run it in Docker”](#run-it-in-docker)
+
+`--docker` runs the same builder inside a packaged image, so a machine needs only Docker and the CLI. The project is mounted into the container, and the builder’s connection travels in the environment, so its token is never on a command line. Each packaged builder has an image:
+
+| Builder | Image                                |
+| ------- | ------------------------------------ |
+| Cratis  | `ghcr.io/cratis/builder`             |
+| Axon    | `ghcr.io/cratis/studio-axon-builder` |
+
+```bash
+cratis build run --level code --target axon --docker --image ghcr.io/cratis/studio-axon-builder:<version>
+```
+
+A container that runs a builder on its own, in a pipeline for example, takes the same four variables the CLI passes on: `CRATIS_STUDIO_URL`, `CRATIS_STUDIO_ORGANIZATION`, `CRATIS_BUILDER_ID` and `CRATIS_BUILDER_TOKEN`. Register the builder once with `cratis build connect`, have a maintainer approve it, and keep its token in the pipeline’s secret store.
+
+## Model calls through Studio
+
+[Section titled “Model calls through Studio”](#model-calls-through-studio)
+
+An agent normally signs in on its own and calls its own provider. With `--ai studio`, every call goes to Studio instead, and Studio runs it on the organization’s AI providers:
+
+* **Usage is tracked.** Tokens count in the organization’s usage, per provider and model.
+* **Pooling and limits apply.** The agent and provider pool the organization chose decide which model answers.
+* **No model credential on the machine.**
+
+The CLI starts a small server on the loopback address of the machine and points the agent at it, speaking the OpenAI and Anthropic APIs, with tool calls and streaming. Behind it, each call is one request of the [AI gateway](/developers/builders/protocol/ai/) of the builder protocol, made under the slice’s lease. The gateway is part of protocol version 2, so every builder, whatever it is built with, uses it the same way. A builder you write calls it directly.
+
+The organization needs an AI provider configured under **Settings** > **AI**. Without one, Studio refuses the call and says so, and the build fails with that reason rather than falling back to a credential on the machine.
+
+## The Eventmodelers builder
+
+[Section titled “The Eventmodelers builder”](#the-eventmodelers-builder)
+
+Projects that already use the Eventmodelers BuildKit have a builder too. See [The Eventmodelers builder](/developers/builders/eventmodelers/).
+
+## Related
+
+[Section titled “Related”](#related)
+
+* [The Cratis builder](/developers/builders/local/cratis/)
+* [The Axon builder](/developers/builders/local/axon/)
+* [Choose who builds](/developers/builders/configure/choose-builders/)
+* [The AI gateway](/developers/builders/protocol/ai/)
+* [Use the reference builder](/developers/builders/configure/cratis-build/)
+
+# The Axon builder
+
+> Build a Studio application into a Java application on Axon Framework with the Axon Stage renderer, on your own machine or in Docker, at the Screenplay, Code or Code and AI level.
+
+The Axon builder renders an application’s Screenplay model into a Java application on Axon Framework (Spring Boot and Maven), with the Axon Stage renderer. It supports the same three levels as the [Cratis builder](/developers/builders/local/cratis/), through the same builder system: it is `cratis build run` with `--target axon`, packaged with the `axon` build kit, which says how to verify the result and what an agent may write.
+
+The Axon renderer is experimental. It reports what it cannot place as warnings, and refuses the model in strict mode. It builds backend slices only: commands, events, read models, automations and translations. Screens are not part of the Axon target, so Studio offers the Axon builder no user interface work.
+
+## Before you start
+
+[Section titled “Before you start”](#before-you-start)
+
+* The [Cratis CLI](https://github.com/Cratis/cli), connected to Studio and approved. See [Connect a builder and approve it](/developers/builders/configure/connect-and-approve/).
+* A clean clone of the application’s repository, with Git credentials that can push to it.
+* Without `--docker`: a JDK 21 or later. With it, only Docker.
+* For the **Code and AI** level, a coding agent, and an AI provider in Studio under **Settings** > **AI** if its calls go through Studio.
+
+## Run a level
+
+[Section titled “Run a level”](#run-a-level)
+
+Install the kit into the project once. It tells the builder how to verify the result and what an agent may write:
+
+```bash
+cratis build init --kit axon --agent claude
+```
+
+Then run a level:
+
+```bash
+cratis build run --level screenplay --target axon
+cratis build run --level code --target axon
+cratis build run --level code-ai --target axon --agent claude --ai studio
+```
+
+`--kit <folder>` uses another kit for one run.
+
+At each level the builder:
+
+1. writes the model to the `screenplay` folder of the project,
+2. renders it with the Axon renderer at **Code** and **Code and AI**,
+3. lets the agent complete the bodies the renderer left, at **Code and AI**. The renderer lists them in `UNSUPPORTED.md` and `runtime/UnsupportedImplementations.java`,
+4. verifies with `./mvnw -q -B test`, and
+5. commits on the branch Studio names and reports the outcome.
+
+Generated files carry a managed header and belong to the renderer. The kit keeps agents out of them and lets them write the slots the renderer leaves.
+
+## In Docker
+
+[Section titled “In Docker”](#in-docker)
+
+The Axon builder has its own image, the Cratis builder image with the `axon` kit:
+
+```bash
+cratis build run --level code --target axon --docker --image ghcr.io/cratis/studio-axon-builder:<version>
+```
+
+Without `--image` the CLI would run the Cratis builder image, which has the same tools but not the kit. The image is built from `Builders/axon` and published for each released CLI version.
+
+## Make it the builder
+
+[Section titled “Make it the builder”](#make-it-the-builder)
+
+Open the application’s **Settings** > **Building** in Studio, set **Builder** to the machine, and mark slices **Ready for implementation**. See [Choose who builds](/developers/builders/configure/choose-builders/). The builder’s manifest says it builds the backend only, so an application whose builder is the Axon builder gets its screens from another builder, or from none.
+
+## Related
+
+[Section titled “Related”](#related)
+
+* [Run a builder locally](/developers/builders/local/)
+* [The Cratis builder](/developers/builders/local/cratis/)
+* [The AI gateway](/developers/builders/protocol/ai/)
+* [Build kits](/developers/builders/configure/cratis-build/#build-kits)
+
+# The Cratis builder
+
+> Build a Studio application into .NET on Cratis Arc and Chronicle with a React frontend, on your own machine or in Docker, at the Screenplay, Code or Code and AI level.
+
+The Cratis builder renders an application’s Screenplay model into a .NET application on Cratis Arc and Chronicle, with a React frontend on Cratis Components. It is `cratis build run` with a level, and the renderer is the one `cratis render` uses, so the code it commits is what you get by rendering the model yourself.
+
+## Before you start
+
+[Section titled “Before you start”](#before-you-start)
+
+* The [Cratis CLI](https://github.com/Cratis/cli), signed in to Studio with `cratis build connect --studio --organization <name>`, and the builder approved by a maintainer. See [Connect a builder and approve it](/developers/builders/configure/connect-and-approve/).
+* A clean clone of the application’s repository, with Git credentials that can push to it.
+* For the **Code and AI** level, a coding agent, and an AI provider configured in Studio under **Settings** > **AI** if its calls go through Studio.
+* Without `--docker`: the .NET 11 SDK and Node.js on the machine. With it, only Docker.
+
+## Run a level
+
+[Section titled “Run a level”](#run-a-level)
+
+```bash
+cratis build run --level screenplay
+cratis build run --level code
+cratis build run --level code-ai --agent claude --ai studio
+```
+
+For every slice Studio hands it, the builder:
+
+1. **Writes the model.** The Screenplay documents of the order go to the `screenplay` folder of the project, so the model is committed beside the code it produced.
+2. **Renders** at the **Code** and **Code and AI** levels: the model becomes the application’s backend and, with the Cratis target, its frontend, in the project. A model the renderer refuses fails the build with the renderer’s reason, and is not retried.
+3. **Completes** at the **Code and AI** level: the agent finds what the renderer left unimplemented for the slices and completes it as the specifications require. It runs with the build kit’s permissions and never commits.
+4. **Verifies** with the `--verify` commands and the kit’s, such as `dotnet build` and `dotnet test`. A failing command makes the outcome failed, whatever the agent said.
+5. **Commits and pushes** on the branch Studio names, and **reports** the outcome, with the commit and branch.
+
+A re-render never overwrites a generated file someone edited: it refuses, and says which file. Complete what the renderer leaves for you in the places it leaves them, not by editing what it owns.
+
+## Make it the builder
+
+[Section titled “Make it the builder”](#make-it-the-builder)
+
+1. In Studio, open the application, then **Settings** > **Building**.
+2. Set **Builder** to the machine you connected.
+3. Mark a slice **Ready for implementation**. Studio offers it to the builder, and the builder claims it.
+
+You can also choose the builder for the backend or the screens separately, or for one slice. See [Choose who builds](/developers/builders/configure/choose-builders/).
+
+## In Docker
+
+[Section titled “In Docker”](#in-docker)
+
+```bash
+cratis build run --level code --docker
+```
+
+The image is `ghcr.io/cratis/builder`, at the version of your CLI. It holds the .NET SDK, Node.js, Git, a JDK and Maven, and the CLI. See [Run a builder locally](/developers/builders/local/#run-it-in-docker) for what is passed in, and the image’s definition in the [CLI repository](https://github.com/Cratis/cli).
+
+## With AI through Studio
+
+[Section titled “With AI through Studio”](#with-ai-through-studio)
+
+`--ai studio` makes the agent’s model calls on the organization’s providers, counted in Studio’s usage. See [Model calls through Studio](/developers/builders/local/#model-calls-through-studio).
+
+## Related
+
+[Section titled “Related”](#related)
+
+* [Run a builder locally](/developers/builders/local/)
+* [The Axon builder](/developers/builders/local/axon/)
+* [The AI gateway](/developers/builders/protocol/ai/)
+* [Use the reference builder](/developers/builders/configure/cratis-build/)
+
 # Talk to Studio directly
 
 > For a builder that cannot run the Cratis CLI or needs its own host - the HTTPS conversation with Studio, one request at a time.
@@ -5420,7 +5797,7 @@ Content-Type: application/json
 
 
 {
-  "protocolVersions": [1],
+  "protocolVersions": [1, 2],
   "manifest": {
     "stacks": ["dotnet"],
     "parts": ["backend", "ui"],
@@ -5594,6 +5971,117 @@ The `cratis build` command of the Cratis CLI is a complete builder with this who
 * [The build loop](/developers/builders/protocol/build-loop/): how Studio offers slices, holds leases, retries and settles them.
 * [Build a builder](/developers/builders/build/): the simple path, where the Cratis CLI holds this conversation for you.
 * [Use the reference builder](/developers/builders/configure/cratis-build/): the Cratis CLI’s builder, with its kits and options.
+
+# The AI gateway
+
+> How a builder asks Studio to run its model calls on the organization's own AI providers while it builds a slice, so usage is counted, pooled and limited in one place.
+
+A builder that needs a model, an agent, a generator that asks for help, a fix-up pass, does not have to hold a model credential of its own. With the AI gateway, which arrived in **builder protocol version 2**, it sends the call to Studio. Studio runs it on the AI providers the organization configured under **Settings** > **AI**, and records the tokens.
+
+This page is the contract. The `cratis build run --ai studio` option of the Cratis CLI implements it, and presents it to agents as the OpenAI and Anthropic APIs they already speak. See [Run the Cratis builder locally](/developers/builders/local/#model-calls-through-studio). A builder that talks to Studio without the CLI implements the request below.
+
+## Why a gateway
+
+[Section titled “Why a gateway”](#why-a-gateway)
+
+* **Usage is counted where the organization counts it.** Every call lands in the organization’s usage under the provider and model that answered, beside the calls Studio makes itself.
+* **Pooling and limits apply.** The agent and provider pool the organization chose for code generation decide which model answers, and a provider that is rate limited stops being picked.
+* **No credential on the builder’s machine.** A build server, a container or a laptop needs only the builder’s own token.
+* **Every builder gets it the same way.** The protocol carries the call, so the packaged Cratis builder, the Axon builder, an [Eventmodelers](/developers/builders/eventmodelers/) builder and a builder you write all use the same endpoint.
+
+## Agreeing to it
+
+[Section titled “Agreeing to it”](#agreeing-to-it)
+
+The gateway belongs to protocol version 2. A builder names `2` in the `protocolVersions` of its [hello](/developers/builders/protocol/protocol/#connect). When the agreed `protocolVersion` in the welcome is `2` or higher, the gateway is there. A builder that agreed version 1, because it or Studio is older, must not call it, and one that needs it should stop and say so rather than fall back to a credential of its own.
+
+## Ask for a completion
+
+[Section titled “Ask for a completion”](#ask-for-a-completion)
+
+```text
+POST /work/<sliceId>/ai/chat
+Authorization: Bearer <builderId>.<token>
+Content-Type: application/json
+```
+
+The call is made for a slice the builder holds, under the same credential and with the same refusals as a [lease renewal](/developers/builders/protocol/protocol/#renew-the-lease): once the lease is lost, or the build was cancelled, the call is refused with `410 Gone`. The body is at most 4 MiB.
+
+```json
+{
+  "orderId": "6f0c3d5e-2b1a-4f7e-9a51-0d2c8e4b7a10",
+  "messages": [
+    { "role": "system", "text": "You complete method bodies." },
+    { "role": "user", "text": "Complete PlaceOrder.Handle." },
+    {
+      "role": "assistant",
+      "toolCalls": [ { "id": "call-1", "name": "read_file", "arguments": { "path": "PlaceOrder.cs" } } ]
+    },
+    { "role": "tool", "toolCallId": "call-1", "text": "public class PlaceOrder { }" }
+  ],
+  "tools": [
+    {
+      "name": "read_file",
+      "description": "Reads a file of the project.",
+      "parameters": { "type": "object", "properties": { "path": { "type": "string" } }, "required": ["path"] }
+    }
+  ],
+  "maxOutputTokens": 8192,
+  "temperature": 0.2
+}
+```
+
+| Member                  | Required    | Meaning                                                                                                            |
+| ----------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| `orderId`               | yes         | The order being built                                                                                              |
+| `messages`              | yes         | The conversation so far, at most 400 messages. A `role` is `system`, `user`, `assistant` or `tool`                 |
+| `messages[].text`       | no          | The text of the message                                                                                            |
+| `messages[].toolCalls`  | no          | On an `assistant` message: the tool calls the model made, each with an `id`, a `name` and `arguments` as an object |
+| `messages[].toolCallId` | with `tool` | On a `tool` message: the `id` of the call the text answers                                                         |
+| `tools`                 | no          | The tools the model may call, at most 64: a `name`, a `description` and `parameters` as a JSON Schema object       |
+| `maxOutputTokens`       | no          | At most 32768. Defaults to 8192                                                                                    |
+| `temperature`           | no          | Between 0 and 2                                                                                                    |
+
+`200 OK`:
+
+```json
+{
+  "message": {
+    "role": "assistant",
+    "text": "I will read the file first.",
+    "toolCalls": [ { "id": "call-2", "name": "read_file", "arguments": { "path": "PlaceOrder.cs" } } ]
+  },
+  "finishReason": "toolCalls",
+  "model": "claude-sonnet-5-5",
+  "usage": { "inputTokens": 1204, "outputTokens": 86 }
+}
+```
+
+`finishReason` is `stop` when the model is done, `toolCalls` when it wants the builder to run the tools in `message.toolCalls` and ask again with their results, or `length` when the answer was cut at `maxOutputTokens`. `usage` is what the provider reported; a count the provider did not report is `null`. Studio does not stream: the answer comes whole.
+
+The builder runs the tool loop. Studio never runs a tool for it, and never sees the project.
+
+| Status       | Body                                   | When                                                                                                          |
+| ------------ | -------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `400`        | `{ "reason": "…", "problems": ["…"] }` | The request cannot be read. `problems` names each one                                                         |
+| `401`, `403` | `{ "reason": "…" }`                    | The credential is unknown, removed, declined or still awaiting approval, as everywhere in the protocol        |
+| `410`        | `{ "reason": "…" }`                    | The builder does not hold that slice, or its lease is lost. Stop building                                     |
+| `502`        | `{ "reason": "…" }`                    | The AI provider could not answer. Ask again in a moment                                                       |
+| `503`        | `{ "reason": "…" }`                    | The organization has no AI provider configured. Ask a maintainer to configure one under **Settings** > **AI** |
+
+## What Studio records
+
+[Section titled “What Studio records”](#what-studio-records)
+
+The call is attributed to the organization, as code generation, and counted in its AI usage in tokens and cost per provider and model. Studio does not keep the messages. The builder’s token is never part of a call to a provider, and no provider credential is ever sent to the builder.
+
+## Related
+
+[Section titled “Related”](#related)
+
+* [The builder protocol](/developers/builders/protocol/protocol/)
+* [Run the Cratis builder locally](/developers/builders/local/)
+* [Build orders and outcomes](/developers/builders/build/orders-and-outcomes/)
 
 # The build loop
 
@@ -5779,7 +6267,7 @@ Authorization: Bearer <builderId>.<token>
 
 ```json
 {
-  "protocolVersions": [1],
+  "protocolVersions": [1, 2],
   "manifest": {
     "stacks": ["dotnet"],
     "parts": ["backend", "ui"],
@@ -5815,7 +6303,7 @@ The protocol version says what the conversation on this page means. It is agreed
 3. A builder that names no versions is older than the agreement and speaks version 1. It is accepted while Studio still speaks version 1.
 4. When no version is shared, Studio refuses with `409` and says which side must be updated. Retrying sooner cannot change the answer. Wait a minute, or until the builder or Studio is upgraded.
 
-Studio speaks protocol version **1** today.
+Studio speaks protocol versions **1** and **2** today. Version 2 adds the [AI gateway](/developers/builders/protocol/ai/): a builder agreed on version 2 can ask Studio to run its model calls. Everything else on this page is the same in both versions, and a builder that speaks only version 1 keeps working.
 
 `200 OK` means the builder is welcomed:
 
@@ -5823,8 +6311,8 @@ Studio speaks protocol version **1** today.
 {
   "builderId": "8f0c6a8e-3f0b-4c39-9a3e-2b6f8e1d7c44",
   "name": "Build server",
-  "protocolVersion": 1,
-  "studioProtocolVersions": [1],
+  "protocolVersion": 2,
+  "studioProtocolVersions": [1, 2],
   "needsUpgrade": false,
   "waitSeconds": 20,
   "leaseSeconds": 120
@@ -5840,7 +6328,7 @@ The refusals:
 | `202`  | `{ "reason": "…", "code": "K7QF-2M9D" }`        | The registration waits for approval. Keep showing the code and connect again in a few seconds |
 | `401`  | `{ "reason": "…" }`                             | Unknown builder, wrong token, or removed. Stop, and register again only if the owner asks     |
 | `403`  | `{ "reason": "…" }`                             | The registration was declined or expired. Register again                                      |
-| `409`  | `{ "reason": "…", "minimum": 1, "current": 1 }` | No protocol version in common                                                                 |
+| `409`  | `{ "reason": "…", "minimum": 1, "current": 2 }` | No protocol version in common                                                                 |
 | `422`  | `{ "reason": "…", "problems": ["…"] }`          | The manifest cannot be read                                                                   |
 
 An unknown builder and a wrong token answer the same `401`, so a caller learns nothing without the whole credential.
@@ -5936,6 +6424,16 @@ The body is a [build outcome](/developers/builders/build/orders-and-outcomes/#a-
 | `400`  | The outcome does not follow the schema. `problems` names each problem                                                                                |
 | `409`  | The lease is lost, or the outcome does not fit the build’s Git handling. `reason` says which. While the lease holds, a corrected outcome may be sent |
 
+## Ask for a model call
+
+[Section titled “Ask for a model call”](#ask-for-a-model-call)
+
+```text
+POST /work/<sliceId>/ai/chat
+```
+
+With protocol version 2, a builder that holds a slice can have Studio run a model call on the organization’s AI providers. The request, the answer and the refusals are on [The AI gateway](/developers/builders/protocol/ai/).
+
 ## Disconnect
 
 [Section titled “Disconnect”](#disconnect)
@@ -5986,6 +6484,7 @@ A maintainer removes a builder under **Settings** > **Builders**. Its next reque
 * [Builders](/developers/builders/)
 * [Talk to Studio directly](/developers/builders/protocol/)
 * [The build loop](/developers/builders/protocol/build-loop/)
+* [The AI gateway](/developers/builders/protocol/ai/)
 * [Build orders and outcomes](/developers/builders/build/orders-and-outcomes/)
 
 # Live modeling with your own coding agent
