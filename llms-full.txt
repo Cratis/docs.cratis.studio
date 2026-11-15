@@ -2879,7 +2879,7 @@ The agent or generator never talks to Studio, never sees a credential and never 
 
 [Section titled “What every build has in common”](#what-every-build-has-in-common)
 
-The order is Studio’s [build order](/developers/builders/build/orders-and-outcomes/#a-build-order): the slices to build with their type, the Screenplay model they live in, each slice’s specifications as acceptance criteria, and the hints and feedback people left on the slices. The outcome says what came of it: `built` with the files written, the result of each specification and the assumptions made; `nothingToDo`; `blocked` with questions for a person; or `failed`.
+The order is Studio’s [build order](/developers/builders/build/orders-and-outcomes/#a-build-order): the slices to build with their type, the Screenplay model they live in, each slice’s specifications as acceptance criteria, each slice’s description as a hint, and the feedback people left on the slices. The outcome says what came of it: `built` with the files written, the result of each specification and the assumptions made; `nothingToDo`; `blocked` with questions for a person; or `failed`.
 
 Whichever way you build, the CLI treats the result the same:
 
@@ -3563,7 +3563,7 @@ Build {slices} in the feature `{feature}` of `{application}`. The build order is
 
 1. Run the slice generator first: `node .cratis/build/kit/generator/generate.mts {order}`. It prints the files it wrote or kept, and any test that is missing.
 2. Fill in every place marked `TODO(agent)` in those files, as the instructions describe. Add a test the generator says is missing, named exactly like its specification.
-3. The order's `specifications` are the acceptance criteria. `context.feedback` and `context.hints` come from people on the board, and `context.previousFailure` says why the last attempt failed. Where the order does not say something, such as a field, decide it sensibly and list it as an assumption.
+3. The order's `specifications` are the acceptance criteria. `context.hints` holds each slice's description, the summary of what it is supposed to do; follow it. `context.feedback` comes from people on the board, and `context.previousFailure` says why the last attempt failed. Where the order does not say something, such as a field, decide it sensibly and list it as an assumption.
 4. Run `npx tsc --noEmit`, then `npx vitest run src/{feature}`, then `node .cratis/build/kit/generator/generate.mts --check {order}`, until all three pass. Run one command at a time: chained or piped commands are refused.
 5. Report the result of each specification as `passed` or `failed`, from its test. Write the outcome with your file editing tool.
 ```
@@ -3709,7 +3709,7 @@ An order targets one or more slices of one feature. It carries:
 * **`model`**: the Screenplay `.play` documents and, when available, the canonical compiled model with its `schemaVersion` and `revision`.
 * **`changes`**: per target slice, whether it was `added`, `changed`, `renamed`, `moved` or `removed` since the builder’s last accepted revision, and which of its declarations changed. A builder that has never had an outcome accepted gets every slice as `added`.
 * **`specifications`**: each slice’s Given/When/Then as acceptance criteria, by specification id. The full specification, with its values, is in the Screenplay documents.
-* **`context`**: conventions and hints, people’s comments on the slices, the attempt number and why the previous attempt failed.
+* **`context`**: conventions and hints, people’s comments on the slices, the attempt number and why the previous attempt failed. `hints` carries the description of each target slice that has one, the modeler’s summary of what the slice is supposed to do, as `<slice name>: <description>`. The description is not in the `.play` documents. A builder that hands the work to an AI agent should give the agent these hints as instructions, together with the described handlers and queries in the Screenplay documents, the specifications and the feedback. A removal order carries no hints.
 * **`part`**: `backend`, or `ui` once the backend is built and the slice is waiting for a builder that builds user interfaces, or, from version 3, `removal` (see below).
 * **`deadline`**: when Studio stops waiting.
 
@@ -3753,7 +3753,7 @@ An order never carries a credential. Repository access is handed to the builder 
     ],
     "context": {
         "conventions": ["Amounts are decimals in the invoice currency"],
-        "hints": [],
+        "hints": ["PayInvoice: Lets a customer pay an open invoice in full"],
         "feedback": [
             { "sliceId": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f", "text": "Partial payments come later", "occurred": "2026-11-05T14:12:00+00:00" }
         ],
@@ -3931,7 +3931,7 @@ A `ui` order, in version 2, adds `backend`: what the backend builder reported fo
     ],
     "context": {
         "conventions": ["Amounts are decimals in the invoice currency"],
-        "hints": [],
+        "hints": ["PayInvoice: Lets a customer pay an open invoice in full"],
         "feedback": [
             { "sliceId": "c1d2e3f4-a5b6-4c7d-8e9f-0a1b2c3d4e5f", "text": "Partial payments come later", "occurred": "2026-11-05T14:12:00+00:00" }
         ],
@@ -4628,7 +4628,7 @@ ts-vitest/build-slice.md
 Build the {part} of {slices} in the feature `{feature}` of `{application}`. The build order is at `{order}`; this is attempt {attempt}.
 
 
-1. Read the build order. Its `specifications` for these slices are the acceptance criteria: build what they describe, nothing more. `context.feedback` and `context.hints` come from people on the board, and `context.previousFailure` says why the last attempt failed.
+1. Read the build order. Its `specifications` for these slices are the acceptance criteria: build what they describe, nothing more. `context.hints` holds each slice's description, the summary of what it is supposed to do; follow it. `context.feedback` comes from people on the board, and `context.previousFailure` says why the last attempt failed.
 2. Work in the folder `src/{feature}/`. When a slice's file is already there, change it in place.
 3. Write each slice to `src/{feature}/<slice name>.ts` and its tests to `src/{feature}/<slice name>.test.ts`, as the instructions describe. Where the order does not say something, such as a field, decide it sensibly and list it as an assumption.
 4. Run `npx tsc --noEmit`, then `npx vitest run src/{feature}`, until both pass. Run one command at a time: chained or piped commands are refused.
@@ -5480,21 +5480,39 @@ The adapter writes the slice descriptor and the Screenplay model. It does not dr
 
 # Run a builder locally
 
-> Build a Studio application on your own machine or build server with a packaged builder - Cratis, Axon or Eventmodelers - at the Screenplay, Code or Code and AI level, with model calls made through Studio.
+> Run the packaged Cratis or Axon builder on your machine or in Docker, from Screenplay only through static code and code refined by AI to AI only.
 
 Studio builds slices with its own generation in the cloud. You can run the same builder yourself, on a laptop, a build server or in Docker, and get the same statuses, commits and pull requests in Studio. A packaged builder is the [Cratis CLI](https://github.com/Cratis/cli) with a **level** and a **target**, so it is built on the same builder system as every builder you [connect](/developers/builders/configure/connect-and-approve/), and it speaks the same [builder protocol](/developers/builders/protocol/protocol/).
 
-## The three levels
+## The four levels
 
-[Section titled “The three levels”](#the-three-levels)
+[Section titled “The four levels”](#the-four-levels)
 
-| Level           | What the builder does                                                                                                                 | Calls a model |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| **Screenplay**  | Commits the Screenplay model to the project and writes no code. The model is the application, and Stage plays it.                     | No            |
-| **Code**        | Commits the model and renders it into code with the renderer of the target. The same model always gives the same code.                | No            |
-| **Code and AI** | Renders the model, then a coding agent completes what a renderer leaves for judgment, such as method bodies the model only describes. | Yes           |
+A level says how much of the application the builder produces, and how. Each one matches an implementation mode Studio offers in the cloud, so a local builder covers the same range.
 
-They are the levels Studio offers for an application in the cloud, as **Studio: static code** and **Studio: static code refined by AI**, plus the Screenplay-only choice that builds nothing. A local builder chosen for an application replaces Studio’s own generation for that application.
+| Level           | `--level`    | Studio mode                           | What the builder does                                                                                                              | Calls a model |
+| --------------- | ------------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| **Screenplay**  | `screenplay` | **Screenplay only**                   | Commits the Screenplay model to the project and writes no code. The model is the application, and Stage plays it.                  | No            |
+| **Code**        | `code`       | **Studio: static code**               | Commits the model and renders it into code with the renderer of the target. The same model always gives the same code.             | No            |
+| **Code and AI** | `code-ai`    | **Studio: static code refined by AI** | Renders the model deterministically, then a coding agent implements the behavior the model describes on top of the generated code. | Yes           |
+| **AI**          | `ai`         | **Studio: AI only**                   | Commits the model and renders nothing. A coding agent implements the slices from the model, following the build kit’s conventions. | Yes           |
+
+A local builder chosen for an application replaces Studio’s own generation for that application.
+
+### The instructions the agent gets
+
+[Section titled “The instructions the agent gets”](#the-instructions-the-agent-gets)
+
+At **Code and AI** and **AI**, the agent works from the same instructions Studio’s own AI modes use. They come with the [build order](/developers/builders/build/orders-and-outcomes/), and the CLI lists them in the agent’s prompt under *Instructions from the model*:
+
+* **What each slice is supposed to do.** The description you wrote for the slice in the event model, in the order’s `context.hints`.
+* **Described handlers and queries.** The descriptions of command handlers and queries in the Screenplay documents.
+* **Specifications.** Each specification of the slice is an acceptance criterion, and the agent reports a result for it.
+* **Feedback.** The comments people left on the slice, in `context.feedback`.
+
+At **Code and AI** the renderer has already written the structure: commands, events, read models, wiring and specifications. The agent leaves that code alone, except the places the renderer leaves open, and adds the behavior on top: method bodies, rules, validation, and new files where the behavior needs them. It does not invent behavior the model does not describe. Where the model leaves a decision open, the agent records it as an assumption, and Studio shows it with the slice. Then the checks run, and only work that passes them is committed.
+
+The better a slice’s description and specifications, the better the result. Describe the rules in plain words, and add a specification for each case that matters.
 
 ## The packaged builders
 
@@ -5514,7 +5532,9 @@ Both are one builder: the Cratis CLI, with the render target chosen by `--target
 ```bash
 cratis build connect --studio --organization acme           # once per machine; a maintainer approves it
 cratis build run --level code                                # Cratis, deterministic
-cratis build run --level code-ai --agent claude --ai studio  # Cratis, with an agent, calls through Studio
+cratis build run --level code-ai --agent claude --ai studio  # Cratis, AI on top, calls through Studio
+cratis build run --level ai --agent claude --ai studio       # Cratis, AI only
+cratis build run --level code-ai --target axon --agent claude # Axon, AI on top
 cratis build run --level code --target axon                  # Axon
 cratis build run --level code --docker                       # the same, in the packaged image
 ```
@@ -5570,9 +5590,9 @@ Projects that already use the Eventmodelers BuildKit have a builder too. See [Th
 
 # The Axon builder
 
-> Build a Studio application into a Java application on Axon Framework with the Axon Stage renderer, on your own machine or in Docker, at the Screenplay, Code or Code and AI level.
+> Build a Studio application into Java on Axon Framework, locally or in Docker, from Screenplay only through static code and code refined by AI to AI only.
 
-The Axon builder renders an application’s Screenplay model into a Java application on Axon Framework (Spring Boot and Maven), with the Axon Stage renderer. It supports the same three levels as the [Cratis builder](/developers/builders/local/cratis/), through the same builder system: it is `cratis build run` with `--target axon`, packaged with the `axon` build kit, which says how to verify the result and what an agent may write.
+The Axon builder renders an application’s Screenplay model into a Java application on Axon Framework (Spring Boot and Maven), with the Axon Stage renderer. It supports the same four levels as the [Cratis builder](/developers/builders/local/cratis/), through the same builder system: it is `cratis build run` with `--target axon`, packaged with the `axon` build kit, which says how to verify the result and what an agent may write.
 
 The Axon renderer is experimental. It reports what it cannot place as warnings, and refuses the model in strict mode. It builds backend slices only: commands, events, read models, automations and translations. Screens are not part of the Axon target, so Studio offers the Axon builder no user interface work.
 
@@ -5583,7 +5603,7 @@ The Axon renderer is experimental. It reports what it cannot place as warnings, 
 * The [Cratis CLI](https://github.com/Cratis/cli), connected to Studio and approved. See [Connect a builder and approve it](/developers/builders/configure/connect-and-approve/).
 * A clean clone of the application’s repository, with Git credentials that can push to it.
 * Without `--docker`: a JDK 21 or later. With it, only Docker.
-* For the **Code and AI** level, a coding agent, and an AI provider in Studio under **Settings** > **AI** if its calls go through Studio.
+* For the **Code and AI** and **AI** levels, a coding agent, and an AI provider in Studio under **Settings** > **AI** if its calls go through Studio.
 
 ## Run a level
 
@@ -5601,6 +5621,7 @@ Then run a level:
 cratis build run --level screenplay --target axon
 cratis build run --level code --target axon
 cratis build run --level code-ai --target axon --agent claude --ai studio
+cratis build run --level ai --target axon --agent claude --ai studio
 ```
 
 `--kit <folder>` uses another kit for one run.
@@ -5609,7 +5630,7 @@ At each level the builder:
 
 1. writes the model to the `screenplay` folder of the project,
 2. renders it with the Axon renderer at **Code** and **Code and AI**,
-3. lets the agent complete the bodies the renderer left, at **Code and AI**. The renderer lists them in `UNSUPPORTED.md` and `runtime/UnsupportedImplementations.java`,
+3. at **Code and AI**, lets the agent add the behavior the model describes on top of the rendered code: the slices’ descriptions, the described handlers and queries, the specifications and the feedback. It completes the bodies the renderer left, which the renderer lists in `UNSUPPORTED.md` and `runtime/UnsupportedImplementations.java`. At **AI** nothing is rendered, and the agent writes the slices from the model and the same instructions. See [The instructions the agent gets](/developers/builders/local/#the-instructions-the-agent-gets),
 4. verifies with `./mvnw -q -B test`, and
 5. commits on the branch Studio names and reports the outcome.
 
@@ -5644,7 +5665,7 @@ Open the application’s **Settings** > **Building** in Studio, set **Builder** 
 
 # The Cratis builder
 
-> Build a Studio application into .NET on Cratis Arc and Chronicle with a React frontend, on your own machine or in Docker, at the Screenplay, Code or Code and AI level.
+> Build a Studio application into .NET on Arc and Chronicle with React, locally or in Docker, from Screenplay only through code refined by AI to AI only.
 
 The Cratis builder renders an application’s Screenplay model into a .NET application on Cratis Arc and Chronicle, with a React frontend on Cratis Components. It is `cratis build run` with a level, and the renderer is the one `cratis render` uses, so the code it commits is what you get by rendering the model yourself.
 
@@ -5654,7 +5675,7 @@ The Cratis builder renders an application’s Screenplay model into a .NET appli
 
 * The [Cratis CLI](https://github.com/Cratis/cli), signed in to Studio with `cratis build connect --studio --organization <name>`, and the builder approved by a maintainer. See [Connect a builder and approve it](/developers/builders/configure/connect-and-approve/).
 * A clean clone of the application’s repository, with Git credentials that can push to it.
-* For the **Code and AI** level, a coding agent, and an AI provider configured in Studio under **Settings** > **AI** if its calls go through Studio.
+* For the **Code and AI** and **AI** levels, a coding agent, and an AI provider configured in Studio under **Settings** > **AI** if its calls go through Studio.
 * Without `--docker`: the .NET 11 SDK and Node.js on the machine. With it, only Docker.
 
 ## Run a level
@@ -5665,13 +5686,14 @@ The Cratis builder renders an application’s Screenplay model into a .NET appli
 cratis build run --level screenplay
 cratis build run --level code
 cratis build run --level code-ai --agent claude --ai studio
+cratis build run --level ai --agent claude --ai studio
 ```
 
 For every slice Studio hands it, the builder:
 
 1. **Writes the model.** The Screenplay documents of the order go to the `screenplay` folder of the project, so the model is committed beside the code it produced.
 2. **Renders** at the **Code** and **Code and AI** levels: the model becomes the application’s backend and, with the Cratis target, its frontend, in the project. A model the renderer refuses fails the build with the renderer’s reason, and is not retried.
-3. **Completes** at the **Code and AI** level: the agent finds what the renderer left unimplemented for the slices and completes it as the specifications require. It runs with the build kit’s permissions and never commits.
+3. **Adds the AI layer** at the **Code and AI** level: the agent implements what the slices’ descriptions, the described handlers and queries, the specifications and the feedback ask for, on top of the rendered code. It completes the bodies the renderer left and adds files where the behavior needs them. At the **AI** level nothing is rendered, and the agent writes the slices from the model and the same instructions. Either way it runs with the build kit’s permissions and never commits. See [The instructions the agent gets](/developers/builders/local/#the-instructions-the-agent-gets).
 4. **Verifies** with the `--verify` commands and the kit’s, such as `dotnet build` and `dotnet test`. A failing command makes the outcome failed, whatever the agent said.
 5. **Commits and pushes** on the branch Studio names, and **reports** the outcome, with the commit and branch.
 
@@ -5850,7 +5872,7 @@ Studio holds the request open for up to `waitSeconds`, 20 by default, while it l
 }
 ```
 
-`order` is the [build order](/developers/builders/build/orders-and-outcomes/#a-build-order): the slices to build, the Screenplay model they live in, their specifications as acceptance criteria, and hints and feedback from people. `order.part` says whether to build the `backend`, the `ui`, or, for a `removal` order, to remove what was built for slices that were deleted. `git` says who does the repository work.
+`order` is the [build order](/developers/builders/build/orders-and-outcomes/#a-build-order): the slices to build, the Screenplay model they live in, their specifications as acceptance criteria, each slice’s description of what it is supposed to do as hints, and feedback from people. `order.part` says whether to build the `backend`, the `ui`, or, for a `removal` order, to remove what was built for slices that were deleted. `git` says who does the repository work.
 
 ## 4. Renew the lease while you build
 
@@ -5896,7 +5918,7 @@ A progress report does not renew the lease, so keep the timer running. Never put
 This is the part that is yours. Studio does not care how the builder turns the order into code:
 
 * **Call a generator.** Read the Screenplay documents in `order.model` and render code from them with templates or your own generator.
-* **Hand the order to a coding agent.** Give it the model, the specifications as acceptance criteria, and the hints and feedback in `order.context`, and let it write the code.
+* **Hand the order to a coding agent.** Give it the model, the specifications as acceptance criteria, and the hints and feedback in `order.context` as its instructions, and let it write the code. The hints are the slices’ descriptions, the summary of what each is supposed to do.
 * **Run your checks.** Build the code and run its tests. Report each specification as `passed`, `failed` or `notRun`, and list the assumptions you made where the model was silent. People review them on the slice.
 
 Then do the repository work that `git` asks for:
