@@ -7828,7 +7828,7 @@ From that evidence, Prologue’s interpreter reconstructs a structured event mod
 
 4. Choose where the captured data is written: **Rolling JSON files** or **API**.
 
-5. On the **Setup** step, download the Studio Prologue tool and its configuration from the links shown, install the tool in your environment and run it as a continuous service.
+5. On the **Setup** step, download the Prologue configuration from the link shown. The tool and documentation links open the general Cratis documentation site at [www.cratis.io](https://www.cratis.io), not a Prologue-specific download page. Install the Studio Prologue tool in your environment with the downloaded configuration and run it as a continuous service.
 
 app.cratis.studio
 
@@ -9660,11 +9660,11 @@ You need to be a maintainer. The steps in order are: add a provider, choose its 
 
 2. Select **Add provider**. The **Add AI provider** dialog opens.
 
-3. Choose the **Type**: **OpenAI**, **Azure OpenAI**, **Anthropic**, **OpenAI compatible**, **Z.ai**, **OpenAI Codex** or **GitHub Copilot**.
+3. Choose the **Type**: **OpenAI**, **Anthropic**, **OpenAI compatible** or **Azure OpenAI**. These are the types you can add here; a provider of another type that your organization already has still appears in the list with its type.
 
 4. Enter a **Name** you will recognize, such as *Fast drafting*.
 
-5. Enter the **API Key**. Azure OpenAI and OpenAI compatible services also ask for an **Endpoint**. A link under the key, **How do I get an API key?**, explains where to find one.
+5. Enter the **API Key**. Azure OpenAI and OpenAI compatible services also ask for an **Endpoint**. For OpenAI, Anthropic and Azure OpenAI, a link under the key, **How do I get an API key?**, opens the provider’s own instructions. For OpenAI compatible, a hint explains that the operator of the endpoint provides the key.
 
 6. Select **Add**.
 
