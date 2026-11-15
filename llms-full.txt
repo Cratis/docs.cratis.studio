@@ -1893,7 +1893,7 @@ Every project has a repository: the place where Studio commits generated code, a
 
 [Section titled “Before you start”](#before-you-start)
 
-* A maintainer of your organization has connected GitHub once, under **Settings** > **Integrations** > **Source Control**, with **Connect GitHub**. That installs the Studio GitHub App on the GitHub accounts your code lives in. Studio keeps no personal token. See [Your organization](/organization/) for the organization side.
+* A maintainer of your organization has connected GitHub once, under **Settings** > **Integrations** > **Source Control**, with **Connect GitHub**. That installs the Studio GitHub App on the GitHub accounts your code lives in. Studio keeps no personal token. See [Connect GitHub](/organization/github/) for the organization side.
 * You are allowed to change the project’s settings.
 * The GitHub App installation can reach the repository you want. If **The installation cannot reach any repository** shows up, choose which repositories the installation can reach on GitHub.
 
@@ -2172,7 +2172,7 @@ A board can be connected to a branch and a folder of its repository. Studio then
 [Section titled “Before you start”](#before-you-start)
 
 * The project has a repository connected. See [Connect a repository](/deliver/connect-a-repository/).
-* Git sync works through the GitHub App installation of your organization. Studio stores no Git credentials for it.
+* Git sync works through the GitHub App installation of your organization (see [Connect GitHub](/organization/github/)). Studio stores no Git credentials for it.
 
 ## Connect a board
 
@@ -2368,7 +2368,7 @@ The issue gets the slice’s name as its title, with the slice’s description a
 
 [Section titled “Connect your trackers”](#connect-your-trackers)
 
-Issues go through your organization’s integrations, which a maintainer sets up once under **Settings** > **Integrations**: GitHub, Jira and Linear each have an app to connect. See [Organization integrations](/organization/integrations/).
+Issues go through your organization’s integrations, which a maintainer sets up once under **Settings** > **Integrations**: GitHub, Jira and Linear each have an app to connect. See [Connect GitHub](/organization/github/) and [Organization integrations](/organization/integrations/).
 
 By default a project’s issues go where its source control is. A project can send them to a repository of its own on the **Source control** tab of **Project Settings**, in the **Issues** section. See [Connect a repository](/deliver/connect-a-repository/).
 
@@ -10046,6 +10046,123 @@ Agents that fill in the rest of the code are told to use the same header.
 * [Set up AI](/organization/ai-providers/)
 * [Generate code](/deliver/generate-code/)
 
+# Connect GitHub
+
+> Install the Studio GitHub App on the GitHub organizations or accounts your code lives in, so projects get repositories, pull requests, builds, Git sync and issues.
+
+GitHub is where Studio puts the code it generates and where it keeps your work in step with your team. Your organization connects GitHub once by installing the **Studio GitHub App** on the GitHub organizations or accounts your code lives in. After that, every project can choose a repository from those installations.
+
+With GitHub connected, a project can:
+
+* **Publish generated code** as branches and pull requests, instead of keeping it in Studio’s local repository. See [Generate code](/deliver/generate-code/).
+* **Let builders work in the repository**, whether Studio handles the branches and pull requests or the builder does. See [Builders](/developers/builders/).
+* **Keep a board in sync with Git**, so the model lives beside the code. See [Keep a board in sync with Git](/deliver/git-sync/).
+* **Create issues from slices** and follow their state, and keep slice status and issue state in step. See [Link slices to issues](/deliver/issue-links/).
+
+No personal token is kept. Whenever Studio needs to work in a repository, it asks GitHub for a short-lived token for that one repository.
+
+## Before you start
+
+[Section titled “Before you start”](#before-you-start)
+
+* You are a maintainer of the organization.
+* You can install GitHub Apps on the GitHub organization or account your code lives in, or you can ask its owner to approve the installation.
+
+## Connect GitHub
+
+[Section titled “Connect GitHub”](#connect-github)
+
+1. Open **Organization settings** and select **Integrations**.
+
+2. Under **Source Control**, select **Connect GitHub**.
+
+3. On GitHub, choose the GitHub organization or account your code lives in, choose which repositories the app can reach (all of them, or only the ones you select), and install the app.
+
+4. GitHub sends you back to Studio. The installation is listed under **Source Control**. If it is your organization’s first installation, it becomes the one **Projects use by default**.
+
+app.cratis.studio
+
+![Organization settings, Integrations: the Source Control section with its GitHub installations above Issues, Other providers and Modeling tools](/_astro/settings-integrations.Dwj_4k98_Z1RJNJn.webp)
+
+GitHub installations are listed under Source Control, at the top of Integrations.
+
+If **Connect GitHub** is not offered, the page says *The Studio GitHub App is not configured for this Studio, so GitHub cannot be connected.* Contact support (see [Get help](/reference/get-help/)).
+
+## Several GitHub organizations
+
+[Section titled “Several GitHub organizations”](#several-github-organizations)
+
+Connect GitHub again for each GitHub organization or account your code lives in. Each installation is listed on its own. **Projects use by default** says which one a new project starts with; a project can choose any of them.
+
+Which repositories an installation can reach is decided on GitHub. To give Studio another repository, change the installation’s repository access on GitHub.
+
+## Check that an installation is ready
+
+[Section titled “Check that an installation is ready”](#check-that-an-installation-is-ready)
+
+Each installation shows whether Studio can use it:
+
+| Status                                     | What it means                                                                                                                                                                                 |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ready**                                  | Studio can use it for everything.                                                                                                                                                             |
+| **Waiting for approval on GitHub**         | The app asks for a permission, such as **Issues**, that the owner has not accepted yet. It keeps working for source control. Select **Review and approve on GitHub** to send the owner there. |
+| **Unavailable**                            | Studio cannot reach it, for example because the app was suspended or uninstalled on GitHub.                                                                                                   |
+| *The provider could not be asked just now* | GitHub did not answer. Studio asks again later.                                                                                                                                               |
+
+## Give a project its repository
+
+[Section titled “Give a project its repository”](#give-a-project-its-repository)
+
+An installation only makes repositories available. Each project chooses its own on **Project Settings** > **Source control**: pick the **Installation**, then **Choose the repository**, then **Connect repository**. An application can use a different repository from the rest of its project.
+
+app.cratis.studio
+
+![Application settings, Source control: the installation and repository the application publishes generated code to](/_astro/application-settings-source-control.DoGIj8Ch_Z25XQx2.webp)
+
+A project or application chooses one repository from the installations your organization connected.
+
+The project’s source control also says whether the repository is ready:
+
+* *Ready to publish generated branches.* Everything works.
+* *This installation needs to be reapproved on GitHub before Studio can publish generated branches.* The app asks for more permissions than the owner has granted. An owner of the GitHub organization approves them on GitHub; select **Review on GitHub**.
+* *Studio cannot read this installation’s settings on GitHub*, so it cannot tell whether the installation grants what code generation needs.
+* *The installation cannot reach any repository.* Choose which repositories the app can reach on GitHub.
+* *This installation is no longer available on GitHub.* Connect the repository again.
+
+The steps are in [Connect a repository](/deliver/connect-a-repository/).
+
+## Send issues to GitHub
+
+[Section titled “Send issues to GitHub”](#send-issues-to-github)
+
+Issues go to the same place as source control unless you choose otherwise. Under **Issues**, **Issues go to** is **The same as source control** by default, which sends slice issues to the project’s GitHub repository. You can pick another GitHub installation, or another issue tracker such as [Jira](/organization/jira/) or [Linear](/organization/linear/).
+
+To create issues, the installation needs the **Issues** permission. An installation that shows **Waiting for approval on GitHub** can’t create issues until the owner approves it.
+
+Note
+
+Creating an issue from a slice is your own request, made through the installation for that one repository. Closing and reopening issues in the background (issue status sync) does not write through the GitHub App.
+
+## Remove an installation
+
+[Section titled “Remove an installation”](#remove-an-installation)
+
+Select **Remove** next to the installation. An installation chosen for source control or issues has to be replaced there first: Studio says *Choose another installation for source control or issues first.*
+
+Removing it means projects can no longer choose its repositories. Repositories projects already use keep working, and issues already linked stay linked. Removing it in Studio does not uninstall the app. To take its access away, uninstall the Studio GitHub App in the GitHub organization’s or account’s settings.
+
+## Related pages
+
+[Section titled “Related pages”](#related-pages)
+
+[Connect a repository ](/deliver/connect-a-repository/)Give a project the repository generated code goes to.
+
+[Keep a board in sync with Git ](/deliver/git-sync/)Keep the model beside the code.
+
+[Link slices to issues ](/deliver/issue-links/)Create issues from slices and follow them.
+
+[Connect integrations ](/organization/integrations/)Everything else your organization can connect.
+
 # Connect GitLab and Azure DevOps
 
 > Connect GitLab or Azure DevOps to link, create and close issues from slices, and see what Studio can and cannot do with them yet.
@@ -10136,6 +10253,8 @@ The page has these sections:
 | **Other providers** | Jira, Linear, GitLab and Azure DevOps                                               |
 | **Modeling tools**  | Miro                                                                                |
 
+[GitHub ](/organization/github/)Repositories, pull requests, builds, Git sync and issues.
+
 [Jira ](/organization/jira/)Send slice issues to Jira Cloud.
 
 [Linear ](/organization/linear/)Send slice issues to a Linear workspace.
@@ -10144,28 +10263,11 @@ The page has these sections:
 
 [Miro ](/organization/miro/)Import and draw boards on Miro.
 
-## Connect GitHub
+## GitHub
 
-[Section titled “Connect GitHub”](#connect-github)
+[Section titled “GitHub”](#github)
 
-1. Under **Source Control**, select **Connect GitHub**.
-
-2. On GitHub, choose the GitHub organization or account your code lives in and install the Studio GitHub App.
-
-3. GitHub sends you back to Studio. The installation is listed under **Source Control**, and when your organization had none it becomes the one projects use.
-
-No personal token is kept. Studio asks GitHub for a short-lived token for one repository whenever it needs one: for generated pull requests, builds, [Git sync](/deliver/git-sync/) and issues.
-
-You can connect several installations, for example one for each GitHub organization your code lives in. **Projects use by default** says which one a new project starts with.
-
-Each installation shows whether it is ready:
-
-* **Ready**: it can be used.
-* **Waiting for approval on GitHub**: the app asks for the **Issues** permission and the owner has not accepted it yet. It keeps working for source control. Select **Review and approve on GitHub** to send the owner there.
-* **Limited**: the provider cannot do everything Studio’s repository work needs. This is how GitLab and Azure DevOps show today.
-* **Unavailable**: Studio cannot reach it, for example because the app was suspended or removed on GitHub.
-
-If **Connect GitHub** is not offered, the page says *The Studio GitHub App is not configured for this Studio*. Contact support (see [Get help](/reference/get-help/)).
+GitHub is connected under **Source Control** by installing the Studio GitHub App. It gives projects their repositories, pull requests, builds, Git sync and issues. How to connect it, check that it is ready and remove it is in [Connect GitHub](/organization/github/).
 
 ## Choose where issues go
 
