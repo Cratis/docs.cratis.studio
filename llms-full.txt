@@ -5433,7 +5433,7 @@ An agent that does not read those variables, or a kit that sets its own provider
 [Section titled “In Docker”](#in-docker)
 
 ```bash
-cratis build run --exec "node /opt/eventmodelers/eventmodelers-builder.mjs" --docker --image ghcr.io/cratis/studio-eventmodelers-builder:<version>
+cratis build run --exec "node /opt/eventmodelers/eventmodelers-builder.mjs" --docker --image cratis/studio-eventmodelers-builder:<version>
 ```
 
 The image is the [Cratis builder image](/developers/builders/local/#run-it-in-docker) with Node.js and the adapter at `/opt/eventmodelers`. The project, with its installed kit, is mounted at `/workspace`. Pass the agent’s sign-in variables, or use `--ai studio` so none is needed. The image is built from `Builders/eventmodelers` and published for each released CLI version.
@@ -5545,15 +5545,15 @@ Then choose the builder under **Settings** > **Building** of the application, as
 
 [Section titled “Run it in Docker”](#run-it-in-docker)
 
-`--docker` runs the same builder inside a packaged image, so a machine needs only Docker and the CLI. The project is mounted into the container, and the builder’s connection travels in the environment, so its token is never on a command line. Each packaged builder has an image:
+`--docker` runs the same builder inside a packaged image, so a machine needs only Docker and the CLI. The project is mounted into the container, and the builder’s connection travels in the environment, so its token is never on a command line. Each packaged builder has an image on Docker Hub:
 
-| Builder | Image                                |
-| ------- | ------------------------------------ |
-| Cratis  | `ghcr.io/cratis/builder`             |
-| Axon    | `ghcr.io/cratis/studio-axon-builder` |
+| Builder | Image                                                                               |
+| ------- | ----------------------------------------------------------------------------------- |
+| Cratis  | [`cratis/builder`](https://hub.docker.com/r/cratis/builder)                         |
+| Axon    | [`cratis/studio-axon-builder`](https://hub.docker.com/r/cratis/studio-axon-builder) |
 
 ```bash
-cratis build run --level code --target axon --docker --image ghcr.io/cratis/studio-axon-builder:<version>
+cratis build run --level code --target axon --docker --image cratis/studio-axon-builder:<version>
 ```
 
 A container that runs a builder on its own, in a pipeline for example, takes the same four variables the CLI passes on: `CRATIS_STUDIO_URL`, `CRATIS_STUDIO_ORGANIZATION`, `CRATIS_BUILDER_ID` and `CRATIS_BUILDER_TOKEN`. Register the builder once with `cratis build connect`, have a maintainer approve it, and keep its token in the pipeline’s secret store.
@@ -5640,10 +5640,10 @@ Generated files carry a managed header and belong to the renderer. The kit keeps
 
 [Section titled “In Docker”](#in-docker)
 
-The Axon builder has its own image, the Cratis builder image with the `axon` kit:
+The Axon builder has its own image on Docker Hub, [`cratis/studio-axon-builder`](https://hub.docker.com/r/cratis/studio-axon-builder): the Cratis builder image with the `axon` kit.
 
 ```bash
-cratis build run --level code --target axon --docker --image ghcr.io/cratis/studio-axon-builder:<version>
+cratis build run --level code --target axon --docker --image cratis/studio-axon-builder:<version>
 ```
 
 Without `--image` the CLI would run the Cratis builder image, which has the same tools but not the kit. The image is built from `Builders/axon` and published for each released CLI version.
@@ -5717,7 +5717,7 @@ You can also choose the builder for the backend or the screens separately, or fo
 cratis build run --level code --docker
 ```
 
-The image is `ghcr.io/cratis/builder`, at the version of your CLI. It holds the .NET SDK, Node.js, Git, a JDK and Maven, and the CLI. See [Run a builder locally](/developers/builders/local/#run-it-in-docker) for what is passed in, and the image’s definition in the [CLI repository](https://github.com/Cratis/cli).
+The image is [`cratis/builder`](https://hub.docker.com/r/cratis/builder) on Docker Hub, at the version of your CLI. It holds the .NET SDK, Node.js, Git, a JDK and Maven, and the CLI. See [Run a builder locally](/developers/builders/local/#run-it-in-docker) for what is passed in, and the image’s definition in the [CLI repository](https://github.com/Cratis/cli).
 
 ## With AI through Studio
 
