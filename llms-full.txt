@@ -3713,7 +3713,7 @@ An order targets one or more slices of one feature. It carries:
 * **`part`**: `backend`, or `ui` once the backend is built and the slice is waiting for a builder that builds user interfaces, or, from version 3, `removal` (see below).
 * **`deadline`**: when Studio stops waiting.
 
-An order never carries a credential. Repository access is handed to the builder separately, scoped and short-lived, and the schema refuses any member it does not declare.
+An order never carries a credential. A builder that pushes uses credentials of its own today; Studio handing out short-lived, repository-scoped access is proposed but not available yet. The schema refuses any member it does not declare.
 
 ```json
 {
@@ -5346,7 +5346,7 @@ A maintainer removes a builder under **Organization settings** > **Builders** wi
 
 # Build with the Eventmodelers BuildKit
 
-> Use a project that is built with the Eventmodelers BuildKit as a Studio builder - install the kit, connect the builder, choose an agent, route its model calls through Studio and follow a build from slice to commit.
+> Use a project built with the Eventmodelers BuildKit as a Studio builder - install the kit, connect it, choose an agent and run it locally or in Docker.
 
 Some teams already build their projects with the [Eventmodelers BuildKit](https://github.com/Nebulit-GmbH/Eventmodelers-Build-Kits): a set of agent loops, prompts and skills that turn the slices of an event model into code on a stack such as Node.js, Axon or OpenCQRS. The **Eventmodelers builder** lets Studio hand such a project its slices. Studio keeps the board, the build loop and the statuses; the kit does the building, with its own agent, prompts and stack templates, and Studio’s builder protocol carries the work.
 
@@ -5433,10 +5433,10 @@ An agent that does not read those variables, or a kit that sets its own provider
 [Section titled “In Docker”](#in-docker)
 
 ```bash
-cratis build run --exec "node /opt/eventmodelers/eventmodelers-builder.mjs" --docker --image cratis/studio-eventmodelers-builder:<version>
+cratis build run --exec "node /opt/eventmodelers/eventmodelers-builder.mjs" --docker --image cratis/studio-eventmodelers-builder
 ```
 
-The image is the [Cratis builder image](/developers/builders/local/#run-it-in-docker) with Node.js and the adapter at `/opt/eventmodelers`. The project, with its installed kit, is mounted at `/workspace`. Pass the agent’s sign-in variables, or use `--ai studio` so none is needed. The image is built from `Builders/eventmodelers` and published for each released CLI version.
+The image is the [Cratis builder image](/developers/builders/local/#run-it-in-docker) with Node.js and the adapter at `/opt/eventmodelers`. The project, with its installed kit, is mounted at `/workspace`. Pass the agent’s sign-in variables, or use `--ai studio` so none is needed. The image is versioned with Studio and published to Docker Hub with every Studio release. Name it without a tag and the CLI uses its newest version, tells you when a newer one is out, and `cratis update` pulls it.
 
 ## Follow a build
 
@@ -5545,7 +5545,7 @@ Then choose the builder under **Settings** > **Building** of the application, as
 
 [Section titled “Run it in Docker”](#run-it-in-docker)
 
-`--docker` runs the same builder inside a packaged image, so a machine needs only Docker and the CLI. The project is mounted into the container, and the builder’s connection travels in the environment, so its token is never on a command line. Each packaged builder has an image on Docker Hub:
+`--docker` runs the same builder inside a packaged image, so a machine needs only Docker and the CLI. The project is mounted into the container, and the builder’s connection travels in the environment, so its token is never on a command line. Each packaged builder has an image on Docker Hub, versioned with Studio and published with every Studio release:
 
 | Builder | Image                                                                               |
 | ------- | ----------------------------------------------------------------------------------- |
@@ -5553,8 +5553,11 @@ Then choose the builder under **Settings** > **Building** of the application, as
 | Axon    | [`cratis/studio-axon-builder`](https://hub.docker.com/r/cratis/studio-axon-builder) |
 
 ```bash
-cratis build run --level code --target axon --docker --image cratis/studio-axon-builder:<version>
+cratis build run --level code --docker                # cratis/builder
+cratis build run --level code --target axon --docker  # cratis/studio-axon-builder
 ```
+
+You don’t choose the image or its version. `--docker` picks the image for the target and uses its newest version, pulling it the first time. When Studio has released a newer one, the CLI tells you, and `cratis update` pulls it. To run another image, such as the [Eventmodelers builder](/developers/builders/eventmodelers/), name it with `--image`.
 
 A container that runs a builder on its own, in a pipeline for example, takes the same four variables the CLI passes on: `CRATIS_STUDIO_URL`, `CRATIS_STUDIO_ORGANIZATION`, `CRATIS_BUILDER_ID` and `CRATIS_BUILDER_TOKEN`. Register the builder once with `cratis build connect`, have a maintainer approve it, and keep its token in the pipeline’s secret store.
 
@@ -5643,10 +5646,10 @@ Generated files carry a managed header and belong to the renderer. The kit keeps
 The Axon builder has its own image on Docker Hub, [`cratis/studio-axon-builder`](https://hub.docker.com/r/cratis/studio-axon-builder): the Cratis builder image with the `axon` kit.
 
 ```bash
-cratis build run --level code --target axon --docker --image cratis/studio-axon-builder:<version>
+cratis build run --level code --target axon --docker
 ```
 
-Without `--image` the CLI would run the Cratis builder image, which has the same tools but not the kit. The image is built from `Builders/axon` and published for each released CLI version.
+With `--target axon`, `--docker` picks this image for you; the Cratis builder image has the same tools but not the kit. The image is versioned with Studio and published with every Studio release. The CLI uses the newest version, tells you when a newer one is out, and `cratis update` pulls it.
 
 ## Make it the builder
 
@@ -5717,7 +5720,7 @@ You can also choose the builder for the backend or the screens separately, or fo
 cratis build run --level code --docker
 ```
 
-The image is [`cratis/builder`](https://hub.docker.com/r/cratis/builder) on Docker Hub, at the version of your CLI. It holds the .NET SDK, Node.js, Git, a JDK and Maven, and the CLI. See [Run a builder locally](/developers/builders/local/#run-it-in-docker) for what is passed in, and the image’s definition in the [CLI repository](https://github.com/Cratis/cli).
+The image is [`cratis/builder`](https://hub.docker.com/r/cratis/builder) on Docker Hub. It holds the .NET SDK, Node.js, Git, a JDK and Maven, and the latest Cratis CLI. It is versioned with Studio and published with every Studio release. The CLI uses the newest version, tells you when a newer one is out, and `cratis update` pulls it. See [Run a builder locally](/developers/builders/local/#run-it-in-docker) for what is passed in.
 
 ## With AI through Studio
 
