@@ -1613,6 +1613,16 @@ Switching surface reloads the view while a loading indicator shows. The session,
 
 The **Runtime engine** is shown with its status. Refusals while you try things are named: **Denied (403)** when the caller is not allowed, **Validation refused (400)** when a rule refused the input, and **Not admitted (501)** when the session does not run that part of the model.
 
+## Give feedback in a session
+
+[Section titled “Give feedback in a session”](#give-feedback-in-a-session)
+
+If your application collects feedback, the Play session shows the feedback button, so the people trying the model can tell you what works and what does not, aimed at a screen, a module, a feature, a slice or a component. Their feedback lands on the board, marked **Given in Play**, and you handle it the way you handle feedback on a published application: see [Publish and collect feedback](/deliver/publish-and-feedback/#read-the-feedback).
+
+* Whether a session collects feedback follows how the application handles it: choose **Don’t collect feedback** and Play shows no button.
+* When you stop the session, it takes no more feedback. What was given stays on the board.
+* A session that collects feedback takes a little longer to start, because it starts as a new session instead of being prepared ahead of time.
+
 ## Check that it worked
 
 [Section titled “Check that it worked”](#check-that-it-worked)
@@ -2510,7 +2520,7 @@ Automatic improvement needs an AI provider for your organization, so Studio refu
 
 [Section titled “Who can give feedback”](#who-can-give-feedback)
 
-Everyone who can sign in to the published application can give feedback on it, once feedback is collected. Feedback on an application you are still building, in **Play** or **Preview**, is not collected yet: it works for published applications.
+Everyone who can sign in to the published application can give feedback on it, once feedback is collected. The same goes for a [Play session](/check/play/): while you try your model, the people you let into the session can give feedback from inside it, and it lands on the same board. Feedback in **Preview** is not collected.
 
 ## Read the feedback
 
@@ -2520,11 +2530,13 @@ When feedback is collected, people using the published application can send you 
 
 1. Select **Feedback from the published application** in the top bar. The **Feedback** panel opens.
 
-2. Narrow the list with the filters **Kind**, **Status** and **On** (a module, a feature or a slice).
+2. Narrow the list with the filters **Kind**, **Status**, **Given in** (the published application or a Play session) and **On** (a module, a feature or a slice).
 
 3. Open an entry. It shows **What was on screen** and **Where it shows**, the slices it concerns.
 
 Feedback can be about a whole module, a whole feature, one or more slices, a screen or a single component. Feedback about a module or a feature is shown on that module or feature. If what it names has since been renamed or removed, Studio shows it on the nearest module or feature that still exists, and on the event model itself when none does.
+
+Feedback given in a Play session is marked **Given in Play**, so you can tell what people said about the published application from what they said while trying the model. Feedback you already had is shown as given in the published application.
 
 Each entry has a status: **Open**, **Accepted**, **Declined**, **Addressed** or **Withdrawn**. Choose what to do with it:
 
@@ -2539,6 +2551,8 @@ A suggested change to a screen shows its **Property**, **From** and **To**. Chan
 [Section titled “Improve the application automatically”](#improve-the-application-automatically)
 
 If you chose **Collect feedback and improve the application automatically**, Studio turns feedback into changes to the event model, checks them against every specification, and rolls them out as a new version. Anything that touches sign-in, roles, policies, personal data or what the model contains is left to you. The **Publication** tab lists each improvement and what became of it, and lets you **Pause** and **Resume** the improving, or **Revert** a change. A reverted change rolls the application back as a new version.
+
+The same choice applies to feedback given in a Play session. With **Collect feedback and improve the application automatically**, Studio applies the change to your event model once it has passed the same checks, accepts the feedback, and moves on. Nothing is rolled out, because a Play session is not a published application, and **Pause** and **Resume** apply to it while the application is published. With **Collect feedback for me to review**, which is where every application starts, you decide on each entry.
 
 Because it changes what runs, give your slices [specifications](/check/) before you turn this on. Studio only rolls out a change that passes all of them.
 
