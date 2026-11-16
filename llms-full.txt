@@ -2443,7 +2443,7 @@ Publishing and feedback are new and may change. Expect rough edges, and check wi
 
 4. In **Publish the application**, choose **How long should it run?**: **Permanently**, or **For a period**, as **A duration** in days, weeks or months, or **Until a date**. A period ends at the end of the chosen day, in UTC.
 
-5. Under **What happens with feedback from its users?** choose **Don’t collect feedback**, **Collect feedback for me to review**, or **Collect feedback and improve the application automatically**.
+5. Under **What happens with feedback from its users?** choose **Don’t collect feedback**, **Collect feedback for me to review**, or **Collect feedback and improve the application automatically**. The dialog starts from how the application already handles feedback, which is **Collect feedback for me to review** until someone chooses otherwise. See [Choose how feedback is handled](#choose-how-feedback-is-handled).
 
 6. Select **Publish**.
 
@@ -2474,6 +2474,28 @@ app.cratis.studio
 
 The Publication tab of Application Settings.
 
+## Choose how feedback is handled
+
+[Section titled “Choose how feedback is handled”](#choose-how-feedback-is-handled)
+
+Feedback is handled in one of three ways:
+
+| Choice                                                         | What happens                                                                                                                                                                                     |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Collect feedback for me to review**                          | Feedback lands on the board and people decide what to do with it. This is where every application starts.                                                                                        |
+| **Collect feedback and improve the application automatically** | Studio also turns feedback into changes to the model, checks them, and rolls them out. It suits prototypes. See [Improve the application automatically](#improve-the-application-automatically). |
+| **Don’t collect feedback**                                     | The published application takes no feedback.                                                                                                                                                     |
+
+You can choose before you ever publish. Under **Settings** > **Publication** in the application’s settings, an application that is not published shows **Feedback before publishing**. Pick a choice and select **Save feedback handling**; publishing then starts from it. Once the application is published, the publication decides, and you change it there with **Change feedback handling**. When a publication ends, the application keeps the handling it had. Applications published before this choice existed keep handling feedback exactly as they did.
+
+Automatic improvement needs an AI provider for your organization, so Studio refuses it, and says why, until one is configured.
+
+## Who can give feedback
+
+[Section titled “Who can give feedback”](#who-can-give-feedback)
+
+Everyone who can sign in to the published application can give feedback on it, once feedback is collected. Feedback on an application you are still building, in **Play** or **Preview**, is not collected yet: it works for published applications.
+
 ## Read the feedback
 
 [Section titled “Read the feedback”](#read-the-feedback)
@@ -2485,6 +2507,8 @@ When feedback is collected, people using the published application can send you 
 2. Narrow the list with the filters **Kind**, **Status** and **On** (a module, a feature or a slice).
 
 3. Open an entry. It shows **What was on screen** and **Where it shows**, the slices it concerns.
+
+Feedback can be about a whole module, a whole feature, one or more slices, a screen or a single component. Feedback about a module or a feature is shown on that module or feature. If what it names has since been renamed or removed, Studio shows it on the nearest module or feature that still exists, and on the event model itself when none does.
 
 Each entry has a status: **Open**, **Accepted**, **Declined**, **Addressed** or **Withdrawn**. Choose what to do with it:
 
@@ -9456,13 +9480,14 @@ On the left:
 
 On the right:
 
-| Button                            | What it does                                                      |
-| --------------------------------- | ----------------------------------------------------------------- |
-| **See what Studio is working on** | Opens the jobs panel. See [Jobs](#see-what-studio-is-working-on). |
-| **Report Issue**                  | Opens a menu to report a problem or follow your reports.          |
-| **Questions? Ask on Discord**     | Opens the Cratis community on Discord.                            |
-| **About**                         | Shows the Studio version and its release notes.                   |
-| **Account** (your avatar)         | Opens your account menu.                                          |
+| Button                            | What it does                                                                                                                                                                             |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **See what Studio is working on** | Opens the jobs panel. See [Jobs](#see-what-studio-is-working-on).                                                                                                                        |
+| **Give feedback**                 | Appears only when the Studio team has given you the right to give feedback on Studio. Opens a menu to give feedback on what is on your screen. See [Give feedback on Studio](#get-help). |
+| **Report Issue**                  | Opens a menu to report a problem or follow your reports.                                                                                                                                 |
+| **Questions? Ask on Discord**     | Opens the Cratis community on Discord.                                                                                                                                                   |
+| **About**                         | Shows the Studio version and its release notes.                                                                                                                                          |
+| **Account** (your avatar)         | Opens your account menu.                                                                                                                                                                 |
 
 On a board, a few more buttons join the right-hand group: the play button that runs your model, who else is on the board, the board’s history, its topics, and a **View** menu. They are described [below](#the-board).
 
@@ -9574,6 +9599,8 @@ app.cratis.studio
 ![The right side of the top bar with the Report Issue menu open, showing Report an issue and My issues](/_astro/report-issue-menu.BAOnMIEe_Zb46FY.webp)
 
 The Report Issue menu.
+
+If the Studio team has given you the right to give feedback on Studio, a **Give feedback** button sits beside **Report Issue**. Choose **Give feedback** to say what you think of what is on your screen, and pick **Problem**, **Suggestion**, **Question** or **Praise**. Its menu also lets you give feedback **About specific slices…**, **About this screen…** or **Point at something…**, and **My feedback** shows what you gave and what became of it. You do not see the button until you have been given the right, and you lose it if the right is taken away. What you already gave stays yours.
 
 **About** shows the version of Studio you are using and links to its release notes. For questions and conversation, use **Questions? Ask on Discord**. All the ways to get help are on [Get help](/reference/get-help/).
 
