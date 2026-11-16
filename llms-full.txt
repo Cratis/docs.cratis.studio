@@ -5460,7 +5460,7 @@ An agent that does not read those variables, or a kit that sets its own provider
 cratis build run --exec "node /opt/eventmodelers/eventmodelers-builder.mjs" --docker --image cratis/studio-eventmodelers-builder
 ```
 
-The image is the [Cratis builder image](/developers/builders/local/#run-it-in-docker) with Node.js and the adapter at `/opt/eventmodelers`. The project, with its installed kit, is mounted at `/workspace`. Pass the agent’s sign-in variables, or use `--ai studio` so none is needed. The image is versioned with Studio and published to Docker Hub with every Studio release. Name it without a tag and the CLI uses its newest version, tells you when a newer one is out, and `cratis update` pulls it.
+The image is the [Cratis builder image](/developers/builders/local/#run-it-in-docker) with Node.js and the adapter at `/opt/eventmodelers`. The project, with its installed kit, is mounted at `/workspace`. Pass the agent’s sign-in variables, or use `--ai studio` so none is needed. The image is built from the [Cratis Grip](https://github.com/Cratis/Grip) repository, versioned with it and published to Docker Hub with every Grip release. Name it without a tag and the CLI uses its newest version, tells you when a newer one is out, and `cratis update` pulls it.
 
 ## Follow a build
 
@@ -5569,7 +5569,7 @@ Then choose the builder under **Settings** > **Building** of the application, as
 
 [Section titled “Run it in Docker”](#run-it-in-docker)
 
-`--docker` runs the same builder inside a packaged image, so a machine needs only Docker and the CLI. The project is mounted into the container, and the builder’s connection travels in the environment, so its token is never on a command line. Each packaged builder has an image on Docker Hub, versioned with Studio and published with every Studio release:
+`--docker` runs the same builder inside a packaged image, so a machine needs only Docker and the CLI. The project is mounted into the container, and the builder’s connection travels in the environment, so its token is never on a command line. Each packaged builder has an image on Docker Hub, built from the [Cratis Grip](https://github.com/Cratis/Grip) repository, versioned with it and published with every Grip release:
 
 | Builder | Image                                                                               |
 | ------- | ----------------------------------------------------------------------------------- |
@@ -5673,7 +5673,7 @@ The Axon builder has its own image on Docker Hub, [`cratis/studio-axon-builder`]
 cratis build run --level code --target axon --docker
 ```
 
-With `--target axon`, `--docker` picks this image for you; the Cratis builder image has the same tools but not the kit. The image is versioned with Studio and published with every Studio release. The CLI uses the newest version, tells you when a newer one is out, and `cratis update` pulls it.
+With `--target axon`, `--docker` picks this image for you; the Cratis builder image has the same tools but not the kit. The image is built from the [Cratis Grip](https://github.com/Cratis/Grip) repository, versioned with it and published with every Grip release. The CLI uses the newest version, tells you when a newer one is out, and `cratis update` pulls it.
 
 ## Make it the builder
 
@@ -5744,7 +5744,7 @@ You can also choose the builder for the backend or the screens separately, or fo
 cratis build run --level code --docker
 ```
 
-The image is [`cratis/builder`](https://hub.docker.com/r/cratis/builder) on Docker Hub. It holds the .NET SDK, Node.js, Git, a JDK and Maven, and the latest Cratis CLI. It is versioned with Studio and published with every Studio release. The CLI uses the newest version, tells you when a newer one is out, and `cratis update` pulls it. See [Run a builder locally](/developers/builders/local/#run-it-in-docker) for what is passed in.
+The image is [`cratis/builder`](https://hub.docker.com/r/cratis/builder) on Docker Hub. It holds the .NET SDK, Node.js, Git, a JDK and Maven, and the latest Cratis CLI. It is built from the [Cratis Grip](https://github.com/Cratis/Grip) repository, versioned with it and published with every Grip release. The CLI uses the newest version, tells you when a newer one is out, and `cratis update` pulls it. See [Run a builder locally](/developers/builders/local/#run-it-in-docker) for what is passed in.
 
 ## With AI through Studio
 
