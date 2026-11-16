@@ -12482,9 +12482,9 @@ Screens are one of the building blocks of an event model. To read about the idea
 
 # Design all screens on the design canvas
 
-> See the screens of an application side by side, change them by hand or by asking agents, and keep every change on a history you can step back through.
+> Design the screens of an application together, side by side, by hand or by asking agents, and keep every change on a history you can step back through.
 
-The design canvas is a big board for the screens of one application. Where the [screen editor](/screens/screen-editor/) shows you a single screen of a slice, the canvas shows the layouts that many screens share, side by side, so you can judge them together.
+The design canvas is a big board for the screens of one application. Where the [screen editor](/screens/screen-editor/) shows you a single screen of a slice, the canvas shows the screens of the whole application side by side, so you can see how they fit together and design them as one.
 
 ## Open the canvas
 
@@ -12494,86 +12494,66 @@ In the project drawer, open the application and select **Design**.
 
 app.cratis.studio
 
-![The design canvas of Acme Shop with three artboards named ProductGrid, SideSummary and StorefrontShell, a tool rail on the left and the chat bar at the bottom](/_astro/design-canvas-shop.9vhcdtSL_1VeUAw.webp)
+![The design canvas of Acme Shop with screens side by side, the chat bar at the bottom and the history on the right](/_astro/design-canvas-shop.9vhcdtSL_1VeUAw.webp)
 
-The design canvas of Acme Shop. Each artboard is one screen layout of the application.
+The design canvas of Acme Shop. The screens of the application sit side by side.
 
-Each **artboard** is a screen layout of the application, drawn at a size: **1280** wide for a regular screen and **390** wide for a phone. Every template gets an artboard the first time you open the canvas. Removing an artboard (**Remove from the canvas**) removes only the drawing; the template stays.
-
-Everything is drawn from the application’s [UI profile](/screens/ui-profile-and-themes/): its blueprint templates, the components they accept, and the theme, accent, font and menu. The screens of single slices are still designed on the event model board with [the screen editor](/screens/screen-editor/).
+Every screen is an **artboard**. Everything is drawn from the application’s [UI profile](/screens/ui-profile-and-themes/): its blueprint templates, the components they accept, and the theme, accent, font and menu. The screens of single slices are still designed on the board, in the [screen editor](/screens/screen-editor/).
 
 Note
 
-Nothing on this canvas is free HTML or CSS. Every change is checked against the UI profile before it is applied, and refused with a reason when it does not fit. That is what keeps every screen looking like it belongs to the same application.
+Nothing on this canvas is free HTML or CSS. Every change is checked against what the UI profile and the application offer, and refused with a reason when it does not fit. That is what keeps every screen looking like it belongs to the same application.
 
-## Move around the canvas
+## Ask the agents to design
 
-[Section titled “Move around the canvas”](#move-around-the-canvas)
+[Section titled “Ask the agents to design”](#ask-the-agents-to-design)
 
-Drag the empty canvas to pan. Pinch, or hold Cmd (Mac) or Ctrl and scroll, to zoom. The controls at the bottom right offer **Zoom out**, **Zoom in**, **Zoom to 100%** and **Fit everything**. Delete removes what is selected. The tool rail on the left has:
+The chat bar at the bottom talks to the agents of your organization that design screens. Say what you want, such as “show the orders in a list with the customer and the total”, and the agent places the screens for you.
 
-| Tool                                     | What it does                                                                                                                                                       |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Select (V)**                           | Select and drag artboards, notes and regions.                                                                                                                      |
-| **Add note (N)**                         | Click where a sticky note should go.                                                                                                                               |
-| **Add region (R)**                       | Drag to draw a region around artboards and notes that belong together. Double-click its name to rename it, or use the wrap button to wrap it around what it holds. |
-| **Add chat bubble (C)**                  | Click where a comment thread should go, on the canvas or on an element of a screen.                                                                                |
-| **Components**                           | Open the components you can place.                                                                                                                                 |
-| **New screen from a template**           | Add a screen that starts from a blueprint template.                                                                                                                |
-| **Phone artboard for the active screen** | Add the phone layout of the selected screen.                                                                                                                       |
-| **UI profile look**                      | Open the **Look** panel of the Inspector.                                                                                                                          |
+* When the agent cannot do something, it says so and offers the nearest thing that works as a button.
+* When you ask for different layouts, the agent offers **variations**. Choose the one you like and it replaces the current layout.
+* Ask for sliders (“give me sliders for this screen”) and the **tweaks** panel shows controls tied to settings of the profile. Dragging applies the change live.
+* When the design system lacks something the screens need, the agent proposes it. You decide whether to send the proposal to the design system.
 
-Notes take the same sticky note colors as on the board. See [Notes, comments and topics](/board/notes-comments-and-topics/).
+Agents are set up under **Settings**. If none can design screens, the chat bar says so instead of offering a prompt; see [Work with AI](/working-with-ai/).
 
-## Add a screen
+## Edit the design system
 
-[Section titled “Add a screen”](#add-a-screen)
+[Section titled “Edit the design system”](#edit-the-design-system)
 
-1. Select **New screen from a template** on the rail.
+The application’s design system has its own page under **Design system**. There you change colors, fonts, spacing, components and the words the agents write in, and see the result on screens before anything is kept.
 
-2. Under **Name**, enter a name such as `Orders`.
+1. Choose **Start a draft**. The draft begins as the design system the application has now.
+2. Change what you want. Every change is checked, and refused with a reason when it does not fit the design system.
+3. Choose **Submit draft for review**.
+4. Someone else on your team reviews the draft and chooses **Activate**. You cannot activate a draft you started or changed, and neither can the person who asked the assistant to change it.
 
-3. Under **Start from**, choose a blueprint screen template and select **Create**.
+If the draft changes after it was reviewed, activation is refused until it has been looked at again.
 
-4. The new screen appears as an artboard. Select it to change it in the Inspector.
+### Draw it from your brand
 
-## Change a screen
+[Section titled “Draw it from your brand”](#draw-it-from-your-brand)
 
-[Section titled “Change a screen”](#change-a-screen)
+Open **Sources and assistant** on the design system page. Upload the files that say what your brand looks like, such as a style guide, a token export or a stylesheet. You can upload up to five text files. The assistant reads them together with the application’s own files, tells you where they disagree and writes a draft. Nothing changes until a person activates the draft.
 
-Select an artboard or something on it. The **Inspector** has four tabs: **Properties**, **Structure**, **Look** and **Tweaks**.
+## Change a screen yourself
 
-* A component from the application’s shell is marked **Inherited**. A screen cannot change it; the UI profile changes it for every screen at once.
-* **Show alternatives from other templates** tries your screen in the layouts of other templates.
-* **Look** sets the name, logo initials, shell, menu, color scheme, theme, accent, font and corners of the application. It is the same Look as the [UI profile](/screens/ui-profile-and-themes/).
+[Section titled “Change a screen yourself”](#change-a-screen-yourself)
 
-## Ask agents to design
+Select a screen to open it in the screen editor. What you change is recorded as a step of the screen’s history, the same as the agents’ changes.
 
-[Section titled “Ask agents to design”](#ask-agents-to-design)
+## Step back
 
-The chat bar at the bottom talks to the agents of your organization. Say what you want, such as “give the order summary a total at the bottom”, and the first line starts a **design topic**. Later lines continue it. See topics under **Topics**.
+[Section titled “Step back”](#step-back)
 
-* The agent answers with edits. A card under the answer says how many were **applied** and how many were **refused**, and why. A refusal changes nothing and offers a nearby alternative as a button when there is one.
-* When you ask for different layouts, the agent offers **Variations**, labeled **Option A**, **Option B** and so on. Select **Keep** on the one you like. It replaces the current layout.
-* Ask for sliders (“give me sliders for this screen”) or select **Suggest tweaks for this screen**. The **Tweaks** tab then shows controls tied to settings of the profile. Dragging applies the change live, and one drag is one undo step.
+* Every screen has a **history**: each change is a named step, whether you made it or an agent did. Go back to any step, or undo the whole turn an agent took.
+* **Comments** pin a thread to a screen or to an element of it. A thread can be resolved and opened again.
 
-If no agent is set up for screen design, a built-in helper answers from what the profile offers. The card says **built-in**. To set up agents, see [Work with AI](/working-with-ai/).
+## Where the design is kept
 
-The chat bubbles you pin to a screen hold comment threads. A thread can be handed to the agents. They answer in a design topic that starts with the comment and the screen element it is pinned to.
+[Section titled “Where the design is kept”](#where-the-design-is-kept)
 
-## Step back, and find problems
-
-[Section titled “Step back, and find problems”](#step-back-and-find-problems)
-
-* **History** lists every change as a named step, whether you made it, the Inspector made it or an agent did, for example “Add Dropdown”. Select **Undo** or **Redo**, or pick a step to go back to it.
-* **Problems** lists what is wrong, by screen: a blocker, a warning or just information. Typical problems are an empty slot, a component whose query or command is gone, or an accent color without enough contrast to read. Select a problem to go to it.
-
-## Preview and export
-
-[Section titled “Preview and export”](#preview-and-export)
-
-* **Preview** shows an artboard full size, with the application’s menu working so you can click between screens. Leave with **Exit preview** or Esc. For previews with sample data and personas, see [Preview screens](/screens/preview-screens/).
-* **Export** shows the design as **Screenplay**, as the stored **UI profile**, or as the **Scene document**. Select **Copy** to take it with you. Share the Screenplay with a developer; see [Screenplay files](/developers/screenplay-files/).
+The design is a part of the application. Everyone who works on the application sees the same screens and the same history, and a change one person makes appears for the others as it happens.
 
 ## What happens next
 
@@ -12748,11 +12728,11 @@ The title bar has **Desktop preview** and **Mobile preview**. Mobile shows the s
 
 To click through the screen as a real user would, select **Preview this screen with the changes not yet saved**. See [Preview screens](/screens/preview-screens/).
 
-## Draft with AI
+## Design a slice’s screen with an agent
 
-[Section titled “Draft with AI”](#draft-with-ai)
+[Section titled “Design a slice’s screen with an agent”](#design-a-slices-screen-with-an-agent)
 
-If your organization has an agent set up for screen design, **Draft with AI** proposes additions for you. You describe them in a sentence, select **Generate draft**, read the proposed additions, and then **Preview draft**, **Apply draft** or **Discard**. A draft only adds labels, ordinary inputs and Stack and Row containers. It does not bind data or run commands, so do that yourself after you apply it. Applying a draft is one step you can undo. To set up agents, see [Work with AI](/working-with-ai/).
+If your organization has an agent set up for screen design, ask it for the screen of a slice instead of building it by hand. On the board, open the add menu of the slice’s UI row and select **Design with an agent**. Studio opens the [design canvas](/screens/design-canvas/) on that slice: the agent sees the queries and the command of the slice, and nothing else, and designs a screen from them. What it makes becomes the screen of the slice’s role; open it afterwards in this editor to refine it by hand.
 
 ## What happens next
 
