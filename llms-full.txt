@@ -2474,6 +2474,22 @@ app.cratis.studio
 
 The Publication tab of Application Settings.
 
+## Save a publication’s access list
+
+[Section titled “Save a publication’s access list”](#save-a-publications-access-list)
+
+In **Settings** > **Publication**, an active publication has a **Who can use it** section. Editors can save its access mode and manage its allowed email domains and invited people.
+
+Saved settings only
+
+These settings do not restrict sign-in yet. Invitation delivery and binding an invitation to a person’s sign-in identity are not enabled either. Do not rely on this list to protect a published application.
+
+* Under **Access mode**, choose **Invited only**, or **Open to domains**. A new publication starts with **Invited only** and an empty list. **Open to domains** records the intent to also admit people whose verified sign-in email belongs to an allowed domain; it does not change who can sign in yet.
+* Under **Allowed email domains**, enter a domain such as **example.com**, without an @, address prefix or path, and select **Allow domain**. Select **Remove** beside a domain to take it off the list.
+* Under **Invited people**, enter an **Email address** and select **Invite person**. The person appears as **Invited**; no invitation message is sent. Select **Remove** beside the address to remove the invitation.
+
+Each change is saved immediately. Email addresses and domains ignore surrounding spaces and letter case, and an entry already on the list cannot be added again. Switching to **Invited only** keeps the saved domains. Ending a publication makes its list inactive; publishing again starts a new, empty access list.
+
 ## Choose how feedback is handled
 
 [Section titled “Choose how feedback is handled”](#choose-how-feedback-is-handled)
@@ -6115,8 +6131,17 @@ The builder runs the tool loop. Studio never runs a tool for it, and never sees 
 | `400`        | `{ "reason": "…", "problems": ["…"] }` | The request cannot be read. `problems` names each one                                                         |
 | `401`, `403` | `{ "reason": "…" }`                    | The credential is unknown, removed, declined or still awaiting approval, as everywhere in the protocol        |
 | `410`        | `{ "reason": "…" }`                    | The builder does not hold that slice, or its lease is lost. Stop building                                     |
+| `429`        | `{ "reason": "…" }`                    | The build has used its [allowance](#the-allowance). Stop it: asking again changes nothing for this order      |
 | `502`        | `{ "reason": "…" }`                    | The AI provider could not answer. Ask again in a moment                                                       |
 | `503`        | `{ "reason": "…" }`                    | The organization has no AI provider configured. Ask a maintainer to configure one under **Settings** > **AI** |
+
+## The allowance
+
+[Section titled “The allowance”](#the-allowance)
+
+A build order may make a limited number of model calls and use a limited number of output tokens, all of its calls together. By default that is 1,000 calls and 4,000,000 output tokens, which is far more than a slice needs, and exists so that a builder that loops cannot spend an organization’s AI providers without end. A retry is a new order and starts with a fresh allowance. A Studio operator can change both limits in the `BuilderAI` configuration section (`MaximumCalls` and `MaximumOutputTokens`).
+
+A builder that receives `429` should stop building that slice and report the build as failed with the reason Studio gave. The count is kept in memory, so a restart of Studio gives running builds a fresh allowance.
 
 ## What Studio records
 
