@@ -12334,8 +12334,8 @@ Studio ships improvements continually. The release notes tell you what is new, w
 
 The notes live inside the product, so they always match the version you are running.
 
-* **After an update.** The first time you open Studio after a new release, a **What’s new** window shows the notes of every release since your last visit, starting with the newest. Use **Older release** and **Newer release**, or the release picker, to move between them. Select **Show all releases** to browse the whole history. Closing the window marks them as seen, so it does not reappear for the same releases.
-* **Any time.** Select the information button in the top bar to open **About**, then choose **Release notes**. **About** also shows the **Version** and **Build** you are on.
+* **After an update.** The first time you open Studio after a new release, a **What’s new** window shows the notes of the releases you have not seen, starting with the newest. Close it and it does not come back for those releases, on any of your devices.
+* **Any time.** Select the information button in the top bar to open **About**, then choose **Release notes** to see every release: pick one from the list to read it. **About** also shows the **Version** and **Build** you are on.
 
 If you are new to Studio, the window stays quiet on your first visit. There is nothing to catch up on.
 
