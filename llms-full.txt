@@ -2682,7 +2682,7 @@ You do not need any of it to model in Studio. Start with [Get started](/get-star
 | --------------------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------- |
 | Let an AI agent read and change your models               | [MCP](/developers/mcp/)                           | A maintainer issues the credential                          |
 | Hand part of a model to a coding agent                    | [Agent context](/developers/agent-context/)       | Anyone who can see the board                                |
-| Model on a board with the coding agent you run yourself   | [Live modeling](/developers/live-modeling/)       | Anyone with the organization’s MCP credential               |
+| Model on a board with the coding agent you run yourself   | [Live modeling](/developers/live-modeling/)       | Anyone who can sign in to the organization                  |
 | Turn slices into code on your own machine or build server | [Builders](/developers/builders/)                 | A maintainer approves each builder                          |
 | Keep the model next to your code                          | [Screenplay files](/developers/screenplay-files/) | Anyone who can export; a maintainer connects the repository |
 | Tell another system when a board changes                  | [Webhooks](/developers/webhooks/)                 | A maintainer                                                |
@@ -2758,7 +2758,7 @@ When you hand part of a model to an AI assistant or a review pipeline, it needs 
 [Section titled “Fetch it from an agent or a pipeline”](#fetch-it-from-an-agent-or-a-pipeline)
 
 * Over [MCP](/developers/mcp/), call `studio_export_context` with a `scope` (`slice`, `feature`, `eventModel` or `domain`), the `id`, a `format` (`markdown`, `json`, `yaml` or `toon`) and, to save tokens, `includeGuidance: false`.
-* From a terminal or CI, `cratis studio fetch` uses the same tool with your organization’s MCP credential. See [the Cratis CLI](https://www.cratis.io/cli/).
+* From a terminal or CI, `cratis studio fetch` uses the same tool and signs in through Cratis Identity as you do. See [the Cratis CLI](https://www.cratis.io/cli/).
 
 ## What Studio’s own chat agents receive
 
@@ -5093,7 +5093,7 @@ Builds one order from a file without connecting to Studio: steps 1 to 5 and 7 of
 
 [Section titled “status”](#status)
 
-Shows the Studio and the organization the machine is registered with, whether the builder credential and Studio’s MCP credential are stored, and the kit and agent of the current folder. It changes nothing.
+Shows the Studio and the organization the machine is registered with, whether the builder credential and the MCP sign-in is stored, and the kit and agent of the current folder. It changes nothing.
 
 ### `service`
 
@@ -6589,13 +6589,13 @@ People who already run a coding agent (Claude Code, Codex, Gemini CLI, Cursor, G
 * Anyone on the board hands an agent work by mentioning it in a chat topic, for example `@Claude Code add a Pay invoice slice to Billing`.
 * The agent answers in the same topic, under its own name.
 * By default the agent proposes a change and waits. Its reply shows **Go ahead** and **Don’t**, and the agent hears the answer and acts on it. In unattended mode it changes the board and then says what it did.
-* Everything the agent changes is recorded as the agent’s, on behalf of the organization credential that connected it.
+* Everything the agent changes is recorded as the agent’s, on behalf of the person who connected it.
 
 ## Connect an agent
 
 [Section titled “Connect an agent”](#connect-an-agent)
 
-You need the organization’s MCP credential (see [Connect an AI agent over MCP](/developers/mcp/)) and the [Cratis CLI](https://www.cratis.io/cli/).
+You need to be a member of the organization, able to sign in through Cratis Identity (see [Connect an AI agent over MCP](/developers/mcp/)), and the [Cratis CLI](https://www.cratis.io/cli/).
 
 ```text
 cratis build run --modeling --board <eventModelId|board address> --agent claude|codex|gemini|cursor|copilot|opencode [--name "<name>"] [--unattended]
@@ -6608,7 +6608,7 @@ cratis build run --modeling --board <eventModelId|board address> --agent claude|
 | `--name`       | What the agent is called on the board. It defaults to the agent’s product name, such as `Claude Code`, `Codex` or `Gemini CLI` |
 | `--unattended` | Connects in unattended mode. Without it, the agent proposes and waits                                                          |
 
-The command asks for the credential once and keeps it in your operating system’s credential store, never in the project, a prompt or a log.
+The command opens a browser window to sign you in through Cratis Identity and keeps the access in your operating system’s credential store, never in the project, a prompt or a log.
 
 ## What the host does
 
@@ -6627,7 +6627,7 @@ loop:
 studio_disconnect_local_agent
 ```
 
-1. **Token.** Exchange the MCP credential for a bearer token, as described in [Connect an AI agent over MCP](/developers/mcp/). Exchange it again when a call answers `401`.
+1. **Token.** Sign the person in through Cratis Identity with the server’s OAuth metadata (authorization code with PKCE), and refresh the access token when a call answers `401`.
 2. **Connect.** Call `studio_connect_local_agent`. If it answers `connected: false`, stop and show the `outcome` text.
 3. **Start the agent** with Studio’s MCP server configured on its session, with two headers: `Authorization: Bearer <token>` and `x-cratis-studio-local-agent: <sessionId>`. The agent works on the board only through that server, so everything it changes is attributed to it.
 4. **Poll** at least every 30 seconds, with `activity` set to a short line on what the agent is doing. Two minutes without a poll shows the agent as gone.
@@ -6772,8 +6772,7 @@ The answer is JSON and is not cached:
       "transport": "http",
       "purpose": "Studio's board tools for the organization. …",
       "url": "https://mcp.cratis.studio/mcp",
-      "tokenUrl": "https://mcp.cratis.studio/.cratis/token",
-      "authentication": "clientCredentials"
+      "authentication": "oauth"
     }
   ],
   "acp": [
@@ -6813,7 +6812,7 @@ For every build, a host:
 
 2. Writes the order’s Screenplay documents to a workspace folder, also outside the repository, and puts that folder in place of `{workspace}` in the `screenplay` server’s arguments.
 
-3. Gets a bearer token for the `studio` server from `tokenUrl` with the organization’s MCP credential, and adds it as an `Authorization: Bearer …` header on the session only. The token never goes into a prompt, a file in the repository or a log.
+3. Signs the person in for the `studio` server through the OAuth metadata the server publishes, and adds the access token as an `Authorization: Bearer …` header on the session only. The token never goes into a prompt, a file in the repository or a log.
 
 4. Starts the agent with the guidance in the form it reads:
 
@@ -6835,61 +6834,42 @@ With the `screenplay` server, the agent opens the workspace (`open-workspace`), 
 
 # Connect an AI agent over MCP
 
-> Give an AI agent access to your organization's event models over the Model Context Protocol, with the credential from Settings and a client configuration you can copy.
+> Give an AI agent access to your organization's event models over the Model Context Protocol. The agent signs in as you through Cratis Identity, and you add the server with one command.
 
 Studio exposes your organization’s models to AI agents over the [Model Context Protocol](https://modelcontextprotocol.io) (MCP). An agent that is connected can read your projects, event models, brainstorming boards and concepts, and change them. Ask it to add a slice and it adds the slice, instead of describing how you would.
 
 MCP access is not read-only
 
-An agent that holds the organization’s credential can change the organization’s models, not only read them. Connect only agents you trust with that, and treat the credential like a password. [MCP security for maintainers](/developers/mcp-security/) explains what a connected agent can and cannot reach.
+An agent that signs in as you can change the organization’s models, not only read them, with the access you have. Connect only agents you trust with that. [MCP security for maintainers](/developers/mcp-security/) explains what a connected agent can and cannot reach.
 
 Swipe sideways to see the whole diagram
 
-The credential decides the organization. An agent that can read the models can change them too.
+The sign-in decides the person and the organization. An agent that can read the models can change them too.
 
 ## Before you start
 
 [Section titled “Before you start”](#before-you-start)
 
-* Issuing or rotating the credential needs a **maintainer** of the organization. Anyone who can open **Settings** > **MCP** can read it, so keep that page to people you would trust with the agent’s access.
-* Each organization has one credential: a client ID and a client secret. The agent works inside that organization and cannot see another one.
-* An MCP-capable client: Claude Code, an editor’s assistant, or any program that can talk to an MCP server over HTTP and send a bearer token.
+* You need to be a member of the organization. The agent works with your access to it and cannot see another organization.
+* An MCP-capable client: Claude Code, an editor’s assistant, or any program that can talk to an MCP server over HTTP and sign in with OAuth.
 
-## Find the endpoint and the credential
+## Find the endpoint
 
-[Section titled “Find the endpoint and the credential”](#find-the-endpoint-and-the-credential)
+[Section titled “Find the endpoint”](#find-the-endpoint)
 
 1. Open **Settings** > **MCP**.
-2. Read the **Endpoint** and the **Client ID**. The client ID is your organization’s name, so it is not a secret.
-3. Next to **Client secret**, select **Show** to reveal the secret. Select **Hide** when you are done.
-4. If the page says the organization has no MCP credential yet, select **Issue credential**. If that fails, the organization’s encryption key may not be ready yet; try again in a moment.
+2. Read the **Endpoint**.
 
-Select **How to connect** for a dialog that fills these snippets with your own values.
-
-## Get a token
-
-[Section titled “Get a token”](#get-a-token)
-
-The client secret is exchanged for a short-lived bearer token. The token is valid for an hour. The answer also carries a refresh token, which you can exchange for a new token without sending the secret again.
-
-```bash
-curl -X POST https://mcp.cratis.studio/.cratis/token \
-  -d grant_type=client_credentials \
-  -d client_id=<client-id> \
-  -d client_secret=<client-secret>
-```
-
-Use the endpoint address shown on the **MCP** settings page if it differs from the example.
+Select **How to connect** for a dialog that fills these snippets with the real address.
 
 ## Point your agent at Studio
 
 [Section titled “Point your agent at Studio”](#point-your-agent-at-studio)
 
-Most MCP clients take a URL and a header. With Claude Code:
+Most MCP clients only need the address. With Claude Code:
 
 ```bash
-claude mcp add --transport http cratis-studio https://mcp.cratis.studio/mcp \
-  --header "Authorization: Bearer <access_token>"
+claude mcp add --transport http cratis-studio https://mcp.cratis.studio/mcp
 ```
 
 For a client that reads its servers from a configuration file, the equivalent is:
@@ -6899,14 +6879,78 @@ For a client that reads its servers from a configuration file, the equivalent is
   "mcpServers": {
     "cratis-studio": {
       "type": "http",
-      "url": "https://mcp.cratis.studio/mcp",
-      "headers": { "Authorization": "Bearer <access_token>" }
+      "url": "https://mcp.cratis.studio/mcp"
     }
   }
 }
 ```
 
-The header name and the bearer scheme are the same in every client. If your client does not support custom headers, put a small proxy in front that adds the header.
+Use the endpoint address shown on the **MCP** settings page if it differs from the example.
+
+### Claude Code
+
+[Section titled “Claude Code”](#claude-code)
+
+```bash
+claude mcp add --transport http cratis-studio https://mcp.cratis.studio/mcp
+```
+
+Run `/mcp` inside Claude Code, choose `cratis-studio` and select **Authenticate**. Add `--scope project` to put the entry, which holds the address only, in a shared `.mcp.json`.
+
+### Codex
+
+[Section titled “Codex”](#codex)
+
+Add the server to `~/.codex/config.toml`, then sign in:
+
+```toml
+[mcp_servers.cratis-studio]
+url = "https://mcp.cratis.studio/mcp"
+```
+
+```bash
+codex mcp login cratis-studio
+```
+
+If `codex mcp --help` shows no `login`, update Codex.
+
+### pi
+
+[Section titled “pi”](#pi)
+
+Install the server through pi’s MCP adapter, which runs the sign-in:
+
+```text
+mcp({ action: "install", url: "https://mcp.cratis.studio/mcp", server: "cratis-studio" })
+```
+
+Or add it to `~/.pi/agent/mcp.json`, or `.pi/mcp.json` in a trusted project, and authenticate from the adapter:
+
+```json
+{
+  "mcpServers": {
+    "cratis-studio": { "url": "https://mcp.cratis.studio/mcp" }
+  }
+}
+```
+
+### Other clients
+
+[Section titled “Other clients”](#other-clients)
+
+Cursor, VS Code, Claude Desktop custom connectors and any other client that supports a remote MCP server with OAuth need only the address. They find the sign-in from `https://mcp.cratis.studio/.well-known/oauth-protected-resource/mcp`. A client that can only send a fixed header or API key cannot connect: Studio does not issue static keys.
+
+### Scripts and CI
+
+[Section titled “Scripts and CI”](#scripts-and-ci)
+
+A script has no browser, and Cratis Identity has no unattended credential for a person, so unattended access is not available today. Run the work through a signed-in client.
+
+## Sign in
+
+[Section titled “Sign in”](#sign-in)
+
+The first time the client connects, it opens a browser window for Cratis Identity. Sign in, approve the access the client asks for, and choose the organization. The client keeps the access; there is nothing to copy or store, and no secret to rotate.
 
 ## Check that it worked
 
@@ -6933,17 +6977,29 @@ The agent gets Studio’s tools. The ones you will use most:
 
 [Section titled “What the agent cannot do”](#what-the-agent-cannot-do)
 
-* It cannot reach another organization. The organization is fixed by the credential, not by anything the agent asks for.
+* It cannot reach another organization. The organization is fixed by the access token you approved, not by anything the agent asks for.
 * It cannot widen its own access by asking.
 * It cannot remove a module whose slices have started: Studio refuses the removal unless every slice in it is still **Not started**.
 
 Changes the agent makes show up on the board like anyone else’s, and in the board’s history.
 
-## Rotate the secret
+## If it does not work
 
-[Section titled “Rotate the secret”](#rotate-the-secret)
+[Section titled “If it does not work”](#if-it-does-not-work)
 
-If the secret leaks, or you lose track of who has it, select **Rotate secret** under **Settings** > **MCP**. Studio generates a new secret immediately, and the old one stops working at once. Every agent that used the old one has to be reconfigured with a new token.
+| What you see                                               | What to do                                                                                                                                                           |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `401` and no browser opens                                 | The client does not support OAuth for remote servers. Update it or use another.                                                                                      |
+| `401` after it worked                                      | The sign-in expired and could not be renewed. Authenticate again.                                                                                                    |
+| The sign-in says the resource is not known                 | The people running Studio have not enabled the `studio-mcp` audience on Studio’s Cratis Identity. Ask them to follow the Cratis Identity hookup guide for operators. |
+| The agent sees the wrong organization                      | The sign-in is bound to the organization you chose. Remove the server and connect again, choosing the right one.                                                     |
+| The organization’s old client ID and secret no longer work | They were removed. Sign in as a person instead.                                                                                                                      |
+
+## Take access away
+
+[Section titled “Take access away”](#take-access-away)
+
+Access belongs to you and your client. To end it, remove the server from your client, or ask a maintainer to remove you from the organization.
 
 ## Related
 
@@ -6956,88 +7012,56 @@ If the secret leaks, or you lose track of who has it, select **Rotate secret** u
 
 # MCP security for maintainers
 
-> What the MCP credential is, who can use it, how to rotate it, and what it does and does not protect you from.
+> How an AI agent is authenticated to Studio's MCP server, who can use it, how to take access away, and what this does and does not protect you from.
 
-Studio’s MCP server is the one surface Studio deliberately exposes to software it does not control. An AI agent behind it is driven by a language model, and a model can be talked into asking for things nobody intended. The design assumes that.
+Studio does not authenticate MCP callers. The AuthProxy in front of the MCP server is the only authenticator: it accepts an access token that Studio’s own Cratis Identity issued after a person signed in, checks its issuer, audience and scope, and forwards the call with the organization from the token’s `tid` claim. Studio reads the forwarded identity and trusts nothing else.
 
-The promise is narrow and specific: **a call made with your organization’s credential can only reach your organization’s data.** Everything on this page is either how that is kept, or what you must do yourself because Studio cannot.
+## Who can connect
 
-## What the credential is
+[Section titled “Who can connect”](#who-can-connect)
 
-[Section titled “What the credential is”](#what-the-credential-is)
+A person who is a member of the organization, with an MCP client that can sign in with OAuth. There is no shared secret for the organization, no client ID, and nothing to copy out of Settings. What an agent can do is what that person can do in Studio, and no more.
 
-Each organization has one MCP credential, made of two parts:
+| Question                                              | Answer                                                                             |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Which organization does a call act in?                | The one named in the access token, chosen at sign-in. One token, one organization. |
+| Who is recorded as acting?                            | The signed-in person, marked as an agent call.                                     |
+| Can the agent widen its access?                       | No. It cannot ask for another organization or more rights.                         |
+| Can an agent approve itself or change its own access? | No. Calls marked as an agent’s stay refused where a person is required.            |
 
-| Part              | What it is               | Secret?                                                |
-| ----------------- | ------------------------ | ------------------------------------------------------ |
-| **Client ID**     | Your organization’s name | No. It names something your organization already knows |
-| **Client secret** | A generated secret       | Yes. Whoever holds it acts as your organization        |
+## Take access away
 
-An agent exchanges the pair for a bearer token, and the token is what it sends with each call. The token names the organization it was issued for, and Studio signs and encrypts it, so an agent cannot edit it to name another one. Studio also discards any identity information a client sends along with a request, so a header an agent sets can never pass for one Studio produced.
+[Section titled “Take access away”](#take-access-away)
 
-The organization is not a parameter of any tool. A model that is persuaded to ask for another organization’s model has nothing to ask with.
+| To do this                     | Do this                                                                                                                       | Who                       |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| Stop one client                | Remove the server in that client                                                                                              | The person                |
+| Stop one person                | Remove them from the organization. Studio checks membership on every call, so it takes effect at once                         | A maintainer              |
+| Stop everyone, in an emergency | Disable the `studio-mcp` audience on Studio’s Cratis Identity, or remove `mcpAuthorizationServer` from the stack and redeploy | The people running Studio |
 
-## How the secret is kept
+Access tokens live at most five minutes and are renewed by the client, so a person who loses access stops being able to renew within minutes even before a check fails.
 
-[Section titled “How the secret is kept”](#how-the-secret-is-kept)
+## What this protects you from
 
-* Studio stores the secret **encrypted with your organization’s own key**, so that members can read it back under **Settings** > **MCP**.
-* Studio answers the same way for an unknown client ID, a wrong secret and a revoked credential. Nobody can use the token endpoint to find out which organizations exist or whether one has a credential.
+[Section titled “What this protects you from”](#what-this-protects-you-from)
 
-## Studio’s own agents use the same door
+* **A leaked secret.** There is no organization-wide secret to leak.
+* **Cross-organization access.** The organization comes from a signed token, never from a header or argument the agent supplies.
+* **A forged identity inside the cluster.** The MCP server and Core accept forwarded identity only from the AuthProxy, and the network policy keeps other pods away.
 
-[Section titled “Studio’s own agents use the same door”](#studios-own-agents-use-the-same-door)
+## What it does not protect you from
 
-When you ask one of Studio’s agents to do something on a board, it does not reach into Studio. It exchanges your organization’s credential for a token and connects to the public MCP address, exactly as an outside agent does. That is deliberate. Studio’s agents are confined by the same rules as yours, with no second, more privileged path for a model to be talked onto.
+[Section titled “What it does not protect you from”](#what-it-does-not-protect-you-from)
 
-Studio ships no AI model of its own. Until an organization has configured a provider and an agent that can reach it, the AI features are off and say why. A reply is recorded as having acted only when a tool was actually called, not when the model says it did something.
-
-## Issue, show, rotate
-
-[Section titled “Issue, show, rotate”](#issue-show-rotate)
-
-| Task                          | Where                                         | Who                          |
-| ----------------------------- | --------------------------------------------- | ---------------------------- |
-| Issue a credential            | **Settings** > **MCP** > **Issue credential** | A maintainer                 |
-| Read the client ID and secret | **Settings** > **MCP**, then **Show**         | Anyone who can open the page |
-| Rotate the secret             | **Settings** > **MCP** > **Rotate secret**    | A maintainer                 |
-
-Every organization is given a credential automatically when its encryption key is created. **Issue credential** is the way back when that did not happen.
-
-Rotation takes effect immediately. The old secret stops working the moment the new one exists, and every agent that used it has to be reconfigured. Rotate when:
-
-* the secret was pasted somewhere it should not be, such as a chat, a ticket or a repository,
-* someone who knew it has left the team,
-* you do not know who holds it any more.
-
-A token that was already issued can keep working until it expires, which is an hour after it was issued.
-
-## What this does not protect against
-
-[Section titled “What this does not protect against”](#what-this-does-not-protect-against)
-
-The guarantee is narrower than “safe”. Know the limits:
-
-* **An agent acting inside your organization is fully authorized there.** A model talked into removing a module your organization owns is making a legitimate call. Two things stand in the way: the tool descriptions tell the agent to remove only when a person asked, and Studio refuses to remove anything unless every slice in it is still **Not started**. The tenant boundary does not help here.
-* **Anyone who holds the secret is your organization.** There is no second factor. Rotation is the remedy, and it is immediate.
-* **The secret is shown to people in your organization on purpose.** Anyone who can open **Settings** > **MCP** can read it. Encryption protects it at rest, not from your own members.
-* **MCP access is not read-only.** There is no read-only credential today. Connect an agent only when you are comfortable with it changing your models.
-
-## Good practice
-
-[Section titled “Good practice”](#good-practice)
-
-* Keep the secret in a secrets manager or your operating system’s credential store, never in a repository or a prompt.
-* Give each agent its own short-lived token, and let the refresh token renew it, instead of sharing one long-lived token.
-* Rotate on a schedule that matches how often people come and go.
-* Review what agents changed in the board history. Their changes are recorded like anyone else’s.
+* **An agent you trust too much.** It acts as the person, so it can change the organization’s models. Connect only agents you trust, and prefer a person with the narrowest role that fits the work.
+* **A compromised workstation.** The client holds a short-lived token and a renewal; whoever controls it acts as that person until the person is removed or signs out.
+* **Prompt injection.** An agent that reads untrusted text can be steered into using its access. Review what it changes on the board.
 
 ## Related
 
 [Section titled “Related”](#related)
 
 * [Connect an AI agent over MCP](/developers/mcp/)
-* [MCP tools and command catalog](/developers/mcp-tools/)
 * [Your organization](/organization/) for who is a maintainer
 
 # MCP tools and command catalog
@@ -7052,7 +7076,7 @@ Studio has far too many commands for one tool each: that would fill an agent’s
 
 [Section titled “Read access and write access”](#read-access-and-write-access)
 
-Every tool is either a read tool or a write tool. An organization’s MCP credential allows both. A tool that changes the model says so in its description, and the descriptions of destructive tools tell the agent to use them only when a person asked.
+Every tool is either a read tool or a write tool. A connected agent has your access, so it can use both. A tool that changes the model says so in its description, and the descriptions of destructive tools tell the agent to use them only when a person asked.
 
 Every tool that takes an identifier checks that it is a real identifier, and when it is not, tells the agent to read the structure or the model first instead of inventing one. When a tool creates something, it makes the new identifier itself and reports it back.
 
@@ -10121,7 +10145,7 @@ Open the **Account** menu and select **Organization settings**. A full-screen **
 | **AI Provider Pools** | Groups of providers that share work                 | [Set up AI](/organization/ai-providers/)                                                                                                    |
 | **Decision engine**   | How Studio weighs routine choices                   | [Set up AI](/organization/ai-providers/)                                                                                                    |
 | **Agents**            | The model, voice and skills of each agent           | [Agents and skills](/organization/agents-and-skills/)                                                                                       |
-| **MCP**               | Letting an AI agent reach the organization          | [Issue an MCP credential](/organization/mcp-credentials/)                                                                                   |
+| **MCP**               | Letting an AI agent reach the organization          | [Let an AI agent reach your organization](/organization/mcp-credentials/)                                                                   |
 | **Webhooks**          | Telling other systems about board changes           | [Set up webhooks](/organization/webhooks/)                                                                                                  |
 | **Builders**          | The machines that turn slices into code             | [Approve builders](/organization/builders/)                                                                                                 |
 | **Integrations**      | GitHub, Jira, Linear, GitLab, Azure DevOps and Miro | [Connect integrations](/organization/integrations/)                                                                                         |
@@ -10155,7 +10179,7 @@ Settings that belong to one project, application or domain, such as its reposito
 
 [Project and application settings ](/organization/project-and-application-settings/)Repository, reviewers, AI and publishing for one project or application.
 
-[Approve builders and issue an MCP credential ](/organization/builders/)Let machines and agents work with your organization.
+[Approve builders and connect AI agents ](/organization/builders/)Let machines and agents work with your organization.
 
 ## Related pages
 
@@ -11041,58 +11065,39 @@ A Linear connection made earlier with an API key is listed as *Legacy - reconnec
 * [Connect integrations](/organization/integrations/)
 * [Link slices to issues](/deliver/issue-links/)
 
-# Issue an MCP credential
+# Let an AI agent reach your organization
 
-> Give your organization an MCP credential so an AI agent can connect to Studio, and rotate it when it should stop working.
+> Find your organization's MCP address, connect an AI agent by signing in, and take access away. There is no credential to issue or rotate.
 
-An AI agent can work with your organization over the Model Context Protocol (MCP). It can read and change your projects, event models, brainstorming boards and concepts, and only this organization’s. Before it can, a maintainer issues the organization’s credential.
+An AI agent reaches your organization over the Model Context Protocol (MCP) by signing in as a person. Studio does not issue a client ID or secret for the organization, so there is nothing to issue, show or rotate.
 
-## Before you start
+## Find the address
 
-[Section titled “Before you start”](#before-you-start)
+[Section titled “Find the address”](#find-the-address)
 
-You are a maintainer. An organization has one MCP credential. If the page says *No MCP server is deployed for this environment yet.*, MCP is not available for this Studio.
+Open **Settings** > **MCP**. The page shows the **Endpoint**. Select **How to connect** for a dialog with ready-made commands for your address. If the page says no MCP server is deployed for this environment, MCP is not available here yet.
 
-## Issue the credential
+## Connect an agent
 
-[Section titled “Issue the credential”](#issue-the-credential)
+[Section titled “Connect an agent”](#connect-an-agent)
 
-1. Open **Organization settings** and select **MCP**.
+Each person connects their own client:
 
-2. Select **Issue credential**.
+1. Add the endpoint to the client. For Claude Code: `claude mcp add --transport http cratis-studio <endpoint>`.
+2. Authenticate from the client. A browser opens at Cratis Identity. Sign in and choose the organization.
+3. Ask the agent to run `studio_whoami` to check.
 
-3. The page now shows the **Endpoint**, the **Client ID** and the **Client secret**. Select **Show** to read the secret, and **Hide** to cover it again.
+Instructions for Claude Code, Codex, pi and other clients are in [Connect an AI agent over MCP](/developers/mcp/).
 
-app.cratis.studio
+An agent acts as you
 
-![The MCP page of Organization settings with the endpoint and client ID, and the secret hidden](/_astro/settings-mcp.otjaDdXm_ZOzRQw.webp)
+An agent that signs in as you can change the organization’s models with your access. Connect only agents you trust.
 
-The endpoint and the client ID. The secret stays hidden until you select Show.
+## Take access away
 
-If issuing fails, the page says nothing was changed. Try again; if it keeps failing, the organization’s encryption key may not be ready yet.
+[Section titled “Take access away”](#take-access-away)
 
-Caution
-
-Treat the client secret like a password. Anyone who has it can change your boards. Do not paste it into chats, tickets or shared documents.
-
-## Connect the agent
-
-[Section titled “Connect the agent”](#connect-the-agent)
-
-**How to connect** on the same page lists the steps. The full walk-through, with examples for common agents, is in [Connect an AI agent over MCP](/developers/mcp/).
-
-## Rotate the secret
-
-[Section titled “Rotate the secret”](#rotate-the-secret)
-
-Select **Rotate secret** and confirm. A new secret is generated at once and the current one stops working, so every agent using it has to be reconfigured.
-
-## Related pages
-
-[Section titled “Related pages”](#related-pages)
-
-* [Connect an AI agent over MCP](/developers/mcp/)
-* [MCP security for maintainers](/developers/mcp-security/)
+To stop one client, remove the server from it. To stop a person, remove them from the organization: their access ends at once. [MCP security for maintainers](/developers/mcp-security/) has the details.
 
 # Connect Miro
 
@@ -11343,7 +11348,7 @@ Every person in your organization has one of two roles: **Maintainer** or **Memb
 | Invite and remove people, assign seats                                 | Yes        | No                             |
 | Buy seats, change or cancel the subscription                           | Yes        | No                             |
 | Set up AI providers, agents, the decision engine and conversation mode | Yes        | No                             |
-| Connect integrations, webhooks, builders and the MCP credential        | Yes        | No                             |
+| Connect integrations, webhooks, builders and MCP access                | Yes        | No                             |
 | Protect a project or lift its protection                               | Yes        | No                             |
 | See and change every project                                           | Yes        | Opens every project to read it |
 
@@ -13459,11 +13464,19 @@ app.cratis.studio
 
 The name of the file and the host it came from are at the top left, with the Fit to view and Open Cratis Studio buttons at the right. The notice under the name, Some of the document is not shown, is explained below.
 
+## Screens
+
+[Section titled “Screens”](#screens)
+
+A slice whose file designs a screen gets a row for each role that has one, with the screen drawn in it the way Studio draws it - the real screen, not a stand-in. A role whose screen the file does not design, or designs in a way the board cannot draw, keeps an empty window in its place.
+
+Nothing in a screen can be pressed or typed into here: a screen on the Viewer is a picture of the screen, like the rest of the board.
+
 ## What it leaves out
 
 [Section titled “What it leaves out”](#what-it-leaves-out)
 
-The board cannot hold everything a Screenplay file can say. When a file has parts it cannot draw, such as policies, personas, concepts, reactors or screens, the page lists them in a collapsed list above the board, and draws the rest. In the picture above, the notice reads **Some of the document is not shown** with a number, 33 for that file; **Show details** opens the list.
+The board cannot hold everything a Screenplay file can say. When a file has parts it cannot draw, such as policies, personas, concepts or reactors, the page lists them in a collapsed list above the board, and draws the rest. In the picture above, the notice reads **Some of the document is not shown** with a number, 33 for that file; **Show details** opens the list.
 
 If the file does not compile, the page lists the problems with the line and column of each. Fix the file and reload.
 
