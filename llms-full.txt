@@ -8,13 +8,13 @@
 
 [Section titled “New to Studio? Start here”](#new-to-studio-start-here)
 
-[What is Cratis Studio ](/get-started/)What Studio does, who it is for, and how a team works in it.
+[What is Cratis Studio](/get-started/)What Studio does, who it is for, and how a team works in it.
 
-[Model your first behavior ](/get-started/first-event-model/)A fifteen-minute tutorial: from an empty project to a slice you can try out.
+[Model your first behavior](/get-started/first-event-model/)A fifteen-minute tutorial: from an empty project to a slice you can try out.
 
-[Explore the sample ](/get-started/explore-the-sample/)Walk through Acme Commerce, a complete model of an online shop.
+[Explore the sample](/get-started/explore-the-sample/)Walk through Acme Commerce, a complete model of an online shop.
 
-[Event modeling in plain words ](/event-modeling/)Commands, events, read models and slices - the ideas behind the board.
+[Event modeling in plain words](/event-modeling/)Commands, events, read models and slices - the ideas behind the board.
 
 app.cratis.studio
 
@@ -26,27 +26,27 @@ An event model reads left to right, like a story. Every column is one thing the 
 
 [Section titled “What you can do”](#what-you-can-do)
 
-[![The Acme big picture brainstorming board covered in sticky notes](/_astro/big-picture-brainstorming.nVkk0Y53_FftNf.webp) Discover your domain](/discover/)
+[![The Acme big picture brainstorming board covered in sticky notes](/_astro/big-picture-brainstorming.nVkk0Y53_FftNf.webp)Discover your domain](/discover/)
 
 [Brainstorm what happens in the business on sticky notes, then find the concepts, rules and people behind it.](/discover/)
 
-[![Slices on the Storefront event model board](/_astro/storefront-board.Cocj6HLG_AQgEy.webp) Model on the board](/board/)
+[![Slices on the Storefront event model board](/_astro/storefront-board.Cocj6HLG_AQgEy.webp)Model on the board](/board/)
 
 [Lay out screens, commands, events and read models on one timeline, and shape them into slices.](/board/)
 
-[![A screen of the Acme Shop being designed](/_astro/screen-design.NN5kwhZd_25FxVf.webp) Design screens](/screens/)
+[![A screen of the Acme Shop being designed](/_astro/screen-design.NN5kwhZd_25FxVf.webp)Design screens](/screens/)
 
 [Sketch the screens people will use, and preview them with realistic data and personas.](/screens/)
 
-[![Given, When and Then specifications on a slice of the Sales board](/_astro/specifications-sales.Bj7mAU7S_1E0glY.webp) Check behavior](/check/)
+[![Given, When and Then specifications on a slice of the Sales board](/_astro/specifications-sales.Bj7mAU7S_1E0glY.webp)Check behavior](/check/)
 
 [Pin down every rule with Given/When/Then examples, and play the model as a running application.](/check/)
 
-[![An instruction typed into the board's chat bar](/_astro/chat-bar-instruction.UsgNEgvQ_Z2g8Fpw.webp) Work with AI](/working-with-ai/)
+[![An instruction typed into the board's chat bar](/_astro/chat-bar-instruction.UsgNEgvQ_Z2g8Fpw.webp)Work with AI](/working-with-ai/)
 
 [Tell the board what to change, get suggestions, and model by voice with your team’s AI provider.](/working-with-ai/)
 
-[![The progress board with slices in their statuses](/_astro/progress-board.BabxSoyZ_Z1K1zKw.webp) Build and deliver](/deliver/)
+[![The progress board with slices in their statuses](/_astro/progress-board.BabxSoyZ_Z1K1zKw.webp)Build and deliver](/deliver/)
 
 [Follow every slice from idea to done, generate code, and hand slices to builders and coding agents.](/deliver/)
 
@@ -58,25 +58,25 @@ All the guides and pictures use **Acme Commerce**, a sample online shop in five 
 
 [Section titled “Running a team?”](#running-a-team)
 
-[Invite people ](/organization/invite-people/)Bring your team into your organization and give them the right roles.
+[Invite people](/organization/invite-people/)Bring your team into your organization and give them the right roles.
 
-[Seats, billing and your subscription ](/organization/billing-and-subscription/)Buy seats, change your plan, or cancel.
+[Seats, billing and your subscription](/organization/billing-and-subscription/)Buy seats, change your plan, or cancel.
 
-[Set up AI ](/organization/ai-providers/)Choose the AI provider your organization's agents use.
+[Set up AI](/organization/ai-providers/)Choose the AI provider your organization's agents use.
 
-[Connect your tools ](/organization/integrations/)GitHub, Jira, Linear, GitLab, Azure DevOps and Miro.
+[Connect your tools](/organization/integrations/)GitHub, Jira, Linear, GitLab, Azure DevOps and Miro.
 
 ## Building on Studio?
 
 [Section titled “Building on Studio?”](#building-on-studio)
 
-[Connect an AI agent over MCP ](/developers/mcp/)Let your own agent read and change models through the Model Context Protocol.
+[Connect an AI agent over MCP](/developers/mcp/)Let your own agent read and change models through the Model Context Protocol.
 
-[Builders ](/developers/builders/)How Studio hands slices to a builder, and what the builder answers.
+[Builders](/developers/builders/)How Studio hands slices to a builder, and what the builder answers.
 
-[Screenplay files ](/developers/screenplay-files/)The model as text files you can keep in Git, export and import.
+[Screenplay files](/developers/screenplay-files/)The model as text files you can keep in Git, export and import.
 
-[All developer guides ](/developers/)Webhooks, agent context, build orders and more.
+[All developer guides](/developers/)Webhooks, agent context, build orders and more.
 
 ## Need a hand?
 
@@ -106,33 +106,33 @@ Every example in this section uses the Acme Commerce sample project. You can ope
 
 [Section titled “What you can do here”](#what-you-can-do-here)
 
-[Find your way around ](/board/board-basics/)Pan, zoom, the minimap, detail levels and the View menu.
+[Find your way around](/board/board-basics/)Pan, zoom, the minimap, detail levels and the View menu.
 
-[Build the structure ](/board/modules-and-features/)Add modules and features, and connect the areas of your business.
+[Build the structure](/board/modules-and-features/)Add modules and features, and connect the areas of your business.
 
-[Add behavior ](/board/slices/)Add a slice, pick its type and keep track of its status.
+[Add behavior](/board/slices/)Add a slice, pick its type and keep track of its status.
 
-[Describe a command ](/board/commands/)Give a command its fields, its rules and who may run it.
+[Describe a command](/board/commands/)Give a command its fields, its rules and who may run it.
 
-[Describe an event ](/board/events/)Name the facts, make one public and give it tags.
+[Describe an event](/board/events/)Name the facts, make one public and give it tags.
 
-[Shape a read model ](/board/read-models/)Map events onto a read model and add queries.
+[Shape a read model](/board/read-models/)Map events onto a read model and add queries.
 
-[Let the system act ](/board/automations/)Add automations that react to events or to the clock.
+[Let the system act](/board/automations/)Add automations that react to events or to the clock.
 
-[Cross a border ](/board/translations/)Publish public events and translate events from other areas.
+[Cross a border](/board/translations/)Publish public events and translate events from other areas.
 
-[Say who does what ](/board/actors-and-personas/)Add actors and choose a persona for each row.
+[Say who does what](/board/actors-and-personas/)Add actors and choose a persona for each row.
 
-[Talk about the model ](/board/notes-comments-and-topics/)Sticky notes, comments and conversations on the board.
+[Talk about the model](/board/notes-comments-and-topics/)Sticky notes, comments and conversations on the board.
 
-[Look back and undo ](/board/history-and-restore/)See what changed and restore an earlier version.
+[Look back and undo](/board/history-and-restore/)See what changed and restore an earlier version.
 
-[Check your work ](/board/check-the-model/)Findings, storylines, see as a caller and where a value comes from.
+[Check your work](/board/check-the-model/)Findings, storylines, see as a caller and where a value comes from.
 
-[Copy and reuse ](/board/copy-and-paste/)Copy, paste, duplicate and linked copies.
+[Copy and reuse](/board/copy-and-paste/)Copy, paste, duplicate and linked copies.
 
-[Work together ](/board/collaborate/)See who else is on the board, live.
+[Work together](/board/collaborate/)See who else is on the board, live.
 
 ## Where to go from the board
 
@@ -1464,11 +1464,11 @@ Specifications sit under the slice they check, so the examples and the model cha
 
 [Section titled “What you can do here”](#what-you-can-do-here)
 
-[Write specifications ](/check/specifications/)Describe a slice's behavior as Given, When, Then examples, and run them.
+[Write specifications](/check/specifications/)Describe a slice's behavior as Given, When, Then examples, and run them.
 
-[Generate specifications with AI ](/check/generate-specifications/)Let an agent draft the first scenarios from what the slice already says.
+[Generate specifications with AI](/check/generate-specifications/)Let an agent draft the first scenarios from what the slice already says.
 
-[Play your model ](/check/play/)Run the model as an application, try a command and look at what it produced.
+[Play your model](/check/play/)Run the model as an application, try a command and look at what it produced.
 
 ## Where to go next
 
@@ -1867,19 +1867,19 @@ The first two are covered here. The third is described for developers in [For de
 
 [Section titled “What you can do here”](#what-you-can-do-here)
 
-[Choose how slices are built ](/deliver/implementation-modes/)Pick Screenplay only, Static code, Static code + AI or AI only for an application.
+[Choose how slices are built](/deliver/implementation-modes/)Pick Screenplay only, Static code, Static code + AI or AI only for an application.
 
-[Track progress ](/deliver/track-progress/)Change a slice's status, assign it, and see every slice on the Progress board.
+[Track progress](/deliver/track-progress/)Change a slice's status, assign it, and see every slice on the Progress board.
 
-[Generate and review code ](/deliver/generate-code/)Preview what would be written, generate it, follow the run and review the work.
+[Generate and review code](/deliver/generate-code/)Preview what would be written, generate it, follow the run and review the work.
 
-[Connect a repository ](/deliver/connect-a-repository/)Give a project the repository that generated code is written to.
+[Connect a repository](/deliver/connect-a-repository/)Give a project the repository that generated code is written to.
 
-[Keep a board in sync with Git ](/deliver/git-sync/)Commit the board's Screenplay files to a folder of the repository, and bring changes back.
+[Keep a board in sync with Git](/deliver/git-sync/)Commit the board's Screenplay files to a folder of the repository, and bring changes back.
 
-[Link slices to issues ](/deliver/issue-links/)Link a slice to an issue in GitHub, Jira, Linear or another tracker, and keep their status in step.
+[Link slices to issues](/deliver/issue-links/)Link a slice to an issue in GitHub, Jira, Linear or another tracker, and keep their status in step.
 
-[Publish and collect feedback ](/deliver/publish-and-feedback/)Publish an application and collect feedback from the people who use it. Experimental.
+[Publish and collect feedback](/deliver/publish-and-feedback/)Publish an application and collect feedback from the people who use it. Experimental.
 
 Note
 
@@ -2691,17 +2691,17 @@ Swipe sideways to see the whole diagram
 
 What connects to Studio. A double arrow goes both ways; a single arrow only leaves Studio.
 
-[Connect an AI agent over MCP ](/developers/mcp/)The endpoint, the credential and a client configuration that works.
+[Connect an AI agent over MCP](/developers/mcp/)The endpoint, the credential and a client configuration that works.
 
-[Builders ](/developers/builders/)Connect a builder that turns ready slices into code, and choose who builds what.
+[Builders](/developers/builders/)Connect a builder that turns ready slices into code, and choose who builds what.
 
-[Build a builder ](/developers/builders/build/)The Cratis CLI plus a coding agent, a generator of your own in any language, or both. Samples for each.
+[Build a builder](/developers/builders/build/)The Cratis CLI plus a coding agent, a generator of your own in any language, or both. Samples for each.
 
-[Screenplay files ](/developers/screenplay-files/)The .play model as source: export, import and Git sync.
+[Screenplay files](/developers/screenplay-files/)The .play model as source: export, import and Git sync.
 
-[Webhooks ](/developers/webhooks/)The payload, the signature and the retries.
+[Webhooks](/developers/webhooks/)The payload, the signature and the retries.
 
-[Live modeling ](/developers/live-modeling/)Model on a board with the agent you already run.
+[Live modeling](/developers/live-modeling/)Model on a board with the agent you already run.
 
 ## What is public and what is not
 
@@ -2816,15 +2816,15 @@ The CLI does the rest: it connects to Studio, waits for approval, asks for work,
 
 [Section titled “Choose your path”](#choose-your-path)
 
-[Configure a builder ](/developers/builders/configure/connect-and-approve/)Connect a builder, have a maintainer approve it with its code, and choose who builds the application, its screens or a single slice.
+[Configure a builder](/developers/builders/configure/connect-and-approve/)Connect a builder, have a maintainer approve it with its code, and choose who builds the application, its screens or a single slice.
 
-[Run a builder locally ](/developers/builders/local/)Run the Cratis or Axon builder on your machine or in Docker, at the Screenplay, Code or Code and AI level, with model calls through Studio.
+[Run a builder locally](/developers/builders/local/)Run the Cratis or Axon builder on your machine or in Docker, at the Screenplay, Code or Code and AI level, with model calls through Studio.
 
-[Build with AI ](/developers/builders/build/with-ai/)Let a coding agent build your slices inside a build kit, from a registered kit or one you write.
+[Build with AI](/developers/builders/build/with-ai/)Let a coding agent build your slices inside a build kit, from a registered kit or one you write.
 
-[Build a builder ](/developers/builders/build/)Choose between AI, a generator of your own, or a generator with an agent on top, with samples for each.
+[Build a builder](/developers/builders/build/)Choose between AI, a generator of your own, or a generator with an agent on top, with samples for each.
 
-[Talk to Studio directly ](/developers/builders/protocol/)For a builder that cannot run the CLI: the HTTPS conversation with Studio, request by request.
+[Talk to Studio directly](/developers/builders/protocol/)For a builder that cannot run the CLI: the HTTPS conversation with Studio, request by request.
 
 ## Studio’s own generation, or a builder you connect
 
@@ -2893,11 +2893,11 @@ Deterministic with AI on top
 
 Your generator writes the predictable part: files, names, types, wiring and test skeletons. The agent fills in what needs judgment, such as business rules and test data. **Choose it** for the best of both: your structure every time, and the agent’s effort where it counts.
 
-[Build with AI ](/developers/builders/build/with-ai/)Install a kit and build with your agent, then write your own kit for a TypeScript stack.
+[Build with AI](/developers/builders/build/with-ai/)Install a kit and build with your agent, then write your own kit for a TypeScript stack.
 
-[Build with a generator ](/developers/builders/build/deterministic/)The generator contract, with samples in Bash, TypeScript and C#.
+[Build with a generator](/developers/builders/build/deterministic/)The generator contract, with samples in Bash, TypeScript and C#.
 
-[Deterministic with AI on top ](/developers/builders/build/deterministic-and-ai/)A kit whose generator writes the structure and whose agent completes it.
+[Deterministic with AI on top](/developers/builders/build/deterministic-and-ai/)A kit whose generator writes the structure and whose agent completes it.
 
 Not sure? Start **with AI** and a [registered kit](/developers/builders/build/with-ai/#quick-start-with-a-registered-kit): it is the quickest way to see a slice built. When you notice the agent writing the same structure on every slice, move that structure into a generator and keep the agent for the rest.
 
@@ -3288,11 +3288,11 @@ Then run it as a builder with `cratis build run --exec "<your command>" --verify
 
 Each sample is a complete generator that writes a Markdown sheet with the acceptance criteria of every slice in the order, reports `built`, `nothingToDo` or `failed`, and shows where real code generation goes. They are equivalent: pick the language you like, or port one to any other.
 
-[Generator in Bash ](/developers/builders/build/shell/)One script with jq. Runs anywhere a shell does.
+[Generator in Bash](/developers/builders/build/shell/)One script with jq. Runs anywhere a shell does.
 
-[Generator in TypeScript ](/developers/builders/build/typescript/)One file, run by Node.js with no dependencies.
+[Generator in TypeScript](/developers/builders/build/typescript/)One file, run by Node.js with no dependencies.
 
-[Generator in C# ](/developers/builders/build/csharp/)One file, run by dotnet run with no packages.
+[Generator in C#](/developers/builders/build/csharp/)One file, run by dotnet run with no packages.
 
 ## Related
 
@@ -7532,27 +7532,27 @@ Most canvases share the same habits. They are free-form, so you drag cards where
 
 [Section titled “What you can do here”](#what-you-can-do-here)
 
-[Brainstorm events ](/discover/brainstorming/)Write down everything that happens, in any order, then turn it into slices.
+[Brainstorm events](/discover/brainstorming/)Write down everything that happens, in any order, then turn it into slices.
 
-[Concepts ](/discover/concepts/)Give the business's words a precise type, with rules and privacy built in.
+[Concepts](/discover/concepts/)Give the business's words a precise type, with rules and privacy built in.
 
-[Constraints ](/discover/constraints/)Say what must never happen twice, such as two orders with one number.
+[Constraints](/discover/constraints/)Say what must never happen twice, such as two orders with one number.
 
-[Personas ](/discover/personas/)Describe the people your application is for and what they want.
+[Personas](/discover/personas/)Describe the people your application is for and what they want.
 
-[Policies and roles ](/discover/policies-and-roles/)Decide who may do what in the whole application.
+[Policies and roles](/discover/policies-and-roles/)Decide who may do what in the whole application.
 
-[Event sources and streams ](/discover/event-sources/)Describe what the business keeps a history of, such as a basket or an order.
+[Event sources and streams](/discover/event-sources/)Describe what the business keeps a history of, such as a basket or an order.
 
-[State machines and workflows ](/discover/state-machines-and-workflows/)Draw the stages something goes through and the steps that follow.
+[State machines and workflows](/discover/state-machines-and-workflows/)Draw the stages something goes through and the steps that follow.
 
-[Given contexts and seed data ](/discover/given-contexts-and-seed-data/)Name the starting situations for your examples and for a new application.
+[Given contexts and seed data](/discover/given-contexts-and-seed-data/)Name the starting situations for your examples and for a new application.
 
-[Context map and diagrams ](/discover/context-map-and-diagrams/)See how the domains relate, and view the model as UML diagrams.
+[Context map and diagrams](/discover/context-map-and-diagrams/)See how the domains relate, and view the model as UML diagrams.
 
-[Start from an existing system ](/discover/prologue/)Let Prologue observe a running system and propose a first model (beta).
+[Start from an existing system](/discover/prologue/)Let Prologue observe a running system and propose a first model (beta).
 
-[Import a model ](/discover/import-a-model/)Bring in a Screenplay file, Event Modeling JSON or a Miro board.
+[Import a model](/discover/import-a-model/)Bring in a Screenplay file, Event Modeling JSON or a Miro board.
 
 ## Where to find them
 
@@ -8703,13 +8703,13 @@ The shopper places the order and the shop records that checkout completed. The b
 
 This section explains the ideas. The how-to pages show where to click.
 
-[Commands, events and read models ](/event-modeling/commands-events-and-read-models/)The three things everything on a board is built from.
+[Commands, events and read models](/event-modeling/commands-events-and-read-models/)The three things everything on a board is built from.
 
-[Slices ](/event-modeling/slices/)The four kinds of behavior a board can hold.
+[Slices](/event-modeling/slices/)The four kinds of behavior a board can hold.
 
-[Work on the board ](/board/)Add modules, slices and cards, step by step.
+[Work on the board](/board/)Add modules, slices and cards, step by step.
 
-[Discover your domain ](/discover/)Start from a brainstorm instead of a blank board.
+[Discover your domain](/discover/)Start from a brainstorm instead of a blank board.
 
 For the method itself, its history and the thinking behind it, read the [event modeling guide on cratis.io](https://www.cratis.io/event-modeling/).
 
@@ -9362,17 +9362,17 @@ Studio is early software and it changes often. You may find a screen or button t
 
 [Section titled “Where to go next”](#where-to-go-next)
 
-[Sign up and start your trial ](/get-started/sign-up-and-trial/)Create your organization, or join one you were invited to.
+[Sign up and start your trial](/get-started/sign-up-and-trial/)Create your organization, or join one you were invited to.
 
-[Find your way around ](/get-started/find-your-way-around/)The top bar, the project drawer and the places you will spend your time.
+[Find your way around](/get-started/find-your-way-around/)The top bar, the project drawer and the places you will spend your time.
 
-[Explore the Acme Commerce sample ](/get-started/explore-the-sample/)Read a finished model, left to right, to see what good looks like.
+[Explore the Acme Commerce sample](/get-started/explore-the-sample/)Read a finished model, left to right, to see what good looks like.
 
-[Model your first behavior ](/get-started/first-event-model/)A fifteen-minute tutorial: from an empty project to a model you have run.
+[Model your first behavior](/get-started/first-event-model/)A fifteen-minute tutorial: from an empty project to a model you have run.
 
-[Take the guided tours ](/get-started/guided-tours/)Let Studio walk you through a board, narrated or at your own pace.
+[Take the guided tours](/get-started/guided-tours/)Let Studio walk you through a board, narrated or at your own pace.
 
-[Event modeling in Studio ](/event-modeling/)The ideas behind the board, with no steps to follow.
+[Event modeling in Studio](/event-modeling/)The ideas behind the board, with no steps to follow.
 
 # Explore the Acme Commerce sample
 
@@ -10165,21 +10165,21 @@ Settings that belong to one project, application or domain, such as its reposito
 
 [Section titled “What would you like to do?”](#what-would-you-like-to-do)
 
-[Invite people ](/organization/invite-people/)Add a colleague and give them a role and a seat.
+[Invite people](/organization/invite-people/)Add a colleague and give them a role and a seat.
 
-[Set up AI ](/organization/ai-providers/)Bring your own AI provider so the agents can work.
+[Set up AI](/organization/ai-providers/)Bring your own AI provider so the agents can work.
 
-[Buy seats ](/organization/billing-and-subscription/)Choose a plan, pay, and change it later.
+[Buy seats](/organization/billing-and-subscription/)Choose a plan, pay, and change it later.
 
-[Connect your tools ](/organization/integrations/)GitHub, Jira, Linear, GitLab, Azure DevOps and Miro.
+[Connect your tools](/organization/integrations/)GitHub, Jira, Linear, GitLab, Azure DevOps and Miro.
 
-[Configure agents and skills ](/organization/agents-and-skills/)Choose the model and voice of each agent.
+[Configure agents and skills](/organization/agents-and-skills/)Choose the model and voice of each agent.
 
-[Set up webhooks ](/organization/webhooks/)Tell other systems when a board changes.
+[Set up webhooks](/organization/webhooks/)Tell other systems when a board changes.
 
-[Project and application settings ](/organization/project-and-application-settings/)Repository, reviewers, AI and publishing for one project or application.
+[Project and application settings](/organization/project-and-application-settings/)Repository, reviewers, AI and publishing for one project or application.
 
-[Approve builders and connect AI agents ](/organization/builders/)Let machines and agents work with your organization.
+[Approve builders and connect AI agents](/organization/builders/)Let machines and agents work with your organization.
 
 ## Related pages
 
@@ -10703,13 +10703,13 @@ Removing it means projects can no longer choose its repositories. Repositories p
 
 [Section titled “Related pages”](#related-pages)
 
-[Connect a repository ](/deliver/connect-a-repository/)Give a project the repository generated code goes to.
+[Connect a repository](/deliver/connect-a-repository/)Give a project the repository generated code goes to.
 
-[Keep a board in sync with Git ](/deliver/git-sync/)Keep the model beside the code.
+[Keep a board in sync with Git](/deliver/git-sync/)Keep the model beside the code.
 
-[Link slices to issues ](/deliver/issue-links/)Create issues from slices and follow them.
+[Link slices to issues](/deliver/issue-links/)Create issues from slices and follow them.
 
-[Connect integrations ](/organization/integrations/)Everything else your organization can connect.
+[Connect integrations](/organization/integrations/)Everything else your organization can connect.
 
 # Connect GitLab and Azure DevOps
 
@@ -10801,15 +10801,15 @@ The page has these sections:
 | **Other providers** | Jira, Linear, GitLab and Azure DevOps                                               |
 | **Modeling tools**  | Miro                                                                                |
 
-[GitHub ](/organization/github/)Repositories, pull requests, builds, Git sync and issues.
+[GitHub](/organization/github/)Repositories, pull requests, builds, Git sync and issues.
 
-[Jira ](/organization/jira/)Send slice issues to Jira Cloud.
+[Jira](/organization/jira/)Send slice issues to Jira Cloud.
 
-[Linear ](/organization/linear/)Send slice issues to a Linear workspace.
+[Linear](/organization/linear/)Send slice issues to a Linear workspace.
 
-[GitLab and Azure DevOps ](/organization/gitlab-and-azure-devops/)Issues and work items, and what works today.
+[GitLab and Azure DevOps](/organization/gitlab-and-azure-devops/)Issues and work items, and what works today.
 
-[Miro ](/organization/miro/)Import and draw boards on Miro.
+[Miro](/organization/miro/)Import and draw boards on Miro.
 
 ## Choose where issues go
 
@@ -11575,19 +11575,19 @@ What a message looks like, how to check its signature and the retry schedule are
 
 Look things up here: a shortcut, a word you have not met, the meaning of a color, or the way to reach the team.
 
-[Keyboard shortcuts ](/reference/keyboard-shortcuts/)Every shortcut in Studio, grouped by where it works.
+[Keyboard shortcuts](/reference/keyboard-shortcuts/)Every shortcut in Studio, grouped by where it works.
 
-[Glossary ](/reference/glossary/)The terms you meet in Studio, in plain words.
+[Glossary](/reference/glossary/)The terms you meet in Studio, in plain words.
 
-[Statuses and colors ](/reference/statuses-and-colors/)What slice statuses, sticky note colors, build statuses and issue states mean.
+[Statuses and colors](/reference/statuses-and-colors/)What slice statuses, sticky note colors, build statuses and issue states mean.
 
-[Get help ](/reference/get-help/)Report a problem, follow your reports, ask on Discord and read announcements.
+[Get help](/reference/get-help/)Report a problem, follow your reports, ask on Discord and read announcements.
 
-[Profile and appearance ](/reference/profile-and-appearance/)Your name, photo, sign-in methods, background and voice preferences.
+[Profile and appearance](/reference/profile-and-appearance/)Your name, photo, sign-in methods, background and voice preferences.
 
-[Release notes ](/reference/release-notes/)Where to see what changed in Studio.
+[Release notes](/reference/release-notes/)Where to see what changed in Studio.
 
-[Legal ](/reference/legal/)The terms and the privacy policy.
+[Legal](/reference/legal/)The terms and the privacy policy.
 
 New to the ideas behind the board? Start with [Event modeling](/event-modeling/). New to Studio itself? Start with [Get started](/get-started/).
 
@@ -12504,19 +12504,19 @@ Screens are designed in two places, and each answers a different question.
 
 [Section titled “What you can do here”](#what-you-can-do-here)
 
-[Screens on slices ](/screens/screens-on-slices/)Add a screen to a slice, start empty or from a template, and see how it is opened.
+[Screens on slices](/screens/screens-on-slices/)Add a screen to a slice, start empty or from a template, and see how it is opened.
 
-[The screen editor ](/screens/screen-editor/)Place components, bind them to data and to commands, and check the screen on a phone.
+[The screen editor](/screens/screen-editor/)Place components, bind them to data and to commands, and check the screen on a phone.
 
-[Sketches, mockups and images ](/screens/sketches-mockups-and-images/)Show a screen early with a drawing, a page of HTML and CSS, or a picture.
+[Sketches, mockups and images](/screens/sketches-mockups-and-images/)Show a screen early with a drawing, a page of HTML and CSS, or a picture.
 
-[The design canvas ](/screens/design-canvas/)Design all the screens of an application together, by hand or by asking agents.
+[The design canvas](/screens/design-canvas/)Design all the screens of an application together, by hand or by asking agents.
 
-[UI profile, blueprints and themes ](/screens/ui-profile-and-themes/)Choose the shell, logo, colors, font and menu once for the whole application.
+[UI profile, blueprints and themes](/screens/ui-profile-and-themes/)Choose the shell, logo, colors, font and menu once for the whole application.
 
-[Screen templates ](/screens/screen-templates/)Give a module or a feature a ready-made layout that its screens share.
+[Screen templates](/screens/screen-templates/)Give a module or a feature a ready-made layout that its screens share.
 
-[Preview screens ](/screens/preview-screens/)Click through screens with sample data, as the person who will use them.
+[Preview screens](/screens/preview-screens/)Click through screens with sample data, as the person who will use them.
 
 ## Where this fits
 
@@ -13172,13 +13172,13 @@ Project options holds Export, Import and Diagrams for the open event model.
 
 [Section titled “What you can do here”](#what-you-can-do-here)
 
-[Share a read-only snapshot link ](/share/snapshot-link/)Let anyone see the board as it is now, without signing in.
+[Share a read-only snapshot link](/share/snapshot-link/)Let anyone see the board as it is now, without signing in.
 
-[Export the model ](/share/export/)Download a Screenplay file or folder, a Mermaid diagram or Event Modeling JSON.
+[Export the model](/share/export/)Download a Screenplay file or folder, a Mermaid diagram or Event Modeling JSON.
 
-[Draw a board on Miro ](/share/miro/)Put the model on a Miro board, a frame per slice.
+[Draw a board on Miro](/share/miro/)Put the model on a Miro board, a frame per slice.
 
-[Show a model anywhere with the Viewer ](/share/viewer/)Open any public Screenplay file as a read-only board.
+[Show a model anywhere with the Viewer](/share/viewer/)Open any public Screenplay file as a read-only board.
 
 ## Which one should I use?
 
@@ -13570,15 +13570,15 @@ A board works completely without AI. Only the AI features are missing.
 
 [Section titled “What you can do here”](#what-you-can-do-here)
 
-[Talk to your board ](/working-with-ai/talk-to-your-board/)Tell Studio what to change from the chat bar, and review what it did.
+[Talk to your board](/working-with-ai/talk-to-your-board/)Tell Studio what to change from the chat bar, and review what it did.
 
-[Explain and generate ](/working-with-ai/explain-and-generate/)Ask how a part of the model works, or have a draft generated.
+[Explain and generate](/working-with-ai/explain-and-generate/)Ask how a part of the model works, or have a draft generated.
 
-[Suggestions and predictive modeling ](/working-with-ai/suggestions/)Preview a suggested slice, add it whole, or discuss it first.
+[Suggestions and predictive modeling](/working-with-ai/suggestions/)Preview a suggested slice, add it whole, or discuss it first.
 
-[Guided modeling and modeling by voice ](/working-with-ai/guided-modeling-and-voice/)Be walked to a checked model, or talk it onto the board.
+[Guided modeling and modeling by voice](/working-with-ai/guided-modeling-and-voice/)Be walked to a checked model, or talk it onto the board.
 
-[Conversation mode ](/working-with-ai/conversation-mode/)Talk with agents out loud, with the microphone open.
+[Conversation mode](/working-with-ai/conversation-mode/)Talk with agents out loud, with the microphone open.
 
 ## Hand a slice to an outside assistant
 
