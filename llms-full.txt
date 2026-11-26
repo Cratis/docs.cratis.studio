@@ -12084,6 +12084,25 @@ On a Mac, **Cmd** is the command key and **Option** is the alt key. On Windows a
 
 Shortcuts that act on the board only work when you are not typing in a field. Typing always wins: when the cursor is in a text box, copy, paste and delete work on the text.
 
+## The new interface
+
+[Section titled “The new interface”](#the-new-interface)
+
+The new interface, served beside the classic one at the /next address, has shortcuts that work in every room. Press **?** there to see the list. Plain keys only work when you are not typing in a field.
+
+| Action                                                               | Key                                     |
+| -------------------------------------------------------------------- | --------------------------------------- |
+| Open the navigator, to go somewhere, make something or ask           | Cmd + K (Ctrl + K on Windows and Linux) |
+| Make something new                                                   | N                                       |
+| Jump to a room, in the order of the rail                             | 1 to 9, and 0 for the tenth             |
+| Fold or open the left panel, the right panel, or both                | \[ and ] and \\                         |
+| On the Stage: show the screen, the event model board or the timeline | V, B and T                              |
+| Undo and redo, in a room that keeps a history                        | Cmd + Z and Cmd + Shift + Z             |
+
+In the navigator, the arrow keys move within a column, and left and right move between columns. **Enter** goes to what is highlighted, and **Tab** completes the name you are typing.
+
+Browser zoom works in the new interface, and panels fold by themselves on a narrow window.
+
 ## Event model board
 
 [Section titled “Event model board”](#event-model-board)
