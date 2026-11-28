@@ -7035,11 +7035,11 @@ A person who is a member of the organization, with an MCP client that can sign i
 
 | To do this                     | Do this                                                                                                                       | Who                       |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| Stop one client                | Remove the server in that client                                                                                              | The person                |
+| Stop one client                | Remove the server in that client, or revoke the client’s grant in Cratis ID                                                   | The person                |
 | Stop one person                | Remove them from the organization. Studio checks membership on every call, so it takes effect at once                         | A maintainer              |
 | Stop everyone, in an emergency | Disable the `studio-mcp` audience on Studio’s Cratis Identity, or remove `mcpAuthorizationServer` from the stack and redeploy | The people running Studio |
 
-Access tokens live at most five minutes and are renewed by the client, so a person who loses access stops being able to renew within minutes even before a check fails.
+Access tokens live at most five minutes and are renewed by the client. Studio does not ask Cratis ID whether a token was revoked, so a revoked grant stops working when its current access token expires: within five minutes, plus up to 30 seconds of allowed clock difference. The client cannot renew a revoked grant. Removing a person from the organization does not wait for this, because membership is checked on every call.
 
 ## What this protects you from
 
